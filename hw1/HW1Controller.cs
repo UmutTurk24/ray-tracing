@@ -9,9 +9,10 @@ using System.Runtime.InteropServices;
 /// Time spent: 4 hours
 /// Collaborators: C# Documentation and ChatGPT :3
 /// Feedback: 
+/// 
 public class HW1Controller
 {
-    public static bool TestSimpleConstructor() 
+    public static bool TestSimpleVectorConstructor() 
     {
         var simpleVec = new Vector();
 
@@ -19,7 +20,7 @@ public class HW1Controller
             simpleVec.Y == 0 &&
             simpleVec.Z == 0;
     }
-    public static bool TestConstructor()
+    public static bool TestVectorConstructor()
     {
         var simpleVec = new Vector(5,6,7);
 
@@ -102,13 +103,44 @@ public class HW1Controller
         return Vector.GetAngle(vec1, vec2) ==
             (float)Math.Acos(1 / (1 * Math.Sqrt(2)));
     }
-    static void Main()
+
+    public static bool TestSetVector()
     {
+        var vec1 = new Vector(1, 2, 3);
+
+        vec1.X = 5;
+        vec1.Y = 5;
+        vec1.Z = 5;
+        return 5 == vec1.X &&
+            5 == vec1.Y &&
+            5 == vec1.Z;
+    }
+
+    public static bool TestImage()
+    {
+        var img = new Image();
+
+        return 512 == img.Height &&
+            512 == img.Width;
+    }
+
+    public static void TestPaintPixel()
+    {
+
         var myImage = new Image(4, 4);
 
-        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) myImage.Paint(i,j,new Vector(i,j,0));
+        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) 
+            myImage.Paint(i, j, new Vector(i, j, 0));
+            
         Console.WriteLine(myImage);
-
-
     }
+
+    public static bool Test()
+    {
+        var img = new Image();
+
+        return 512 == img.Height &&
+            512 == img.Width;
+    }
+
 }
