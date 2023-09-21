@@ -1,3 +1,6 @@
+using System.Net.Mail;
+
+
 /// <summary>
 /// Represents a three-dimensional vector and provides vector operations.
 /// </summary>
@@ -7,114 +10,212 @@
 public class Vector
 {
     // Private fields for vector components
-    private float x;
-    private float y;
-    private float z;
+    private float _x;
+    private float _y;
+    private float _z;
 
     // Properties to access vector components
     public float X
     {
-        get { return x; }
-        set { x = value; }
+        get { return _x; }
+        set { _x = value; }
     }
 
     public float Y
     {
-        get { return y; }
-        set { y = value; }
+        get { return _y; }
+        set { _y = value; }
     }
 
     public float Z
     {
-        get { return z; }
-        set { z = value; }
+        get { return _z; }
+        set { _z = value; }
     }
 
-    // Default constructor initializes the vector to (0, 0, 0)
     public Vector()
     {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        /// <summary>
+        /// Initializes a vector to (0, 0, 0).
+        /// </summary>
+        /// <returns>A vector with components (0, 0, 0).</returns>
+
+        this._x = 0;
+        this._y = 0;
+        this._z = 0;
     }
 
-    // Constructor with parameters to set the vector components
-    public Vector(float x, float y, float z)
+    public Vector(float _x, float _y, float _z)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        /// <summary>
+        /// Initializes a vector with the specified components.
+        /// </summary>
+        /// <param name="_x">The x component.</param>
+        /// <param name="_y">The y component.</param>
+        /// <param name="_z">The z component.</param>
+        /// <returns>A vector with the specified components.</returns>
+
+        this._x = _x;
+        this._y = _y;
+        this._z = _z;
     }
 
     // Static methods for vector operations
 
-    // Calculate the dot product of two vectors
     public static float Dot(Vector v, Vector l)
     {
+        /// <summary>
+        /// Calculates the dot product of two vectors.
+        /// </summary>
+        /// <param name="v">The first vector.</param>
+        /// <param name="l">The second vector.</param>
+        /// <returns>The dot product of the two vectors.</returns>
+
         return (v.X * l.X) + (v.Y * l.Y) + (v.Z * l.Z);
     }
 
-    // Calculate the cross product of two vectors
     public static Vector Cross(Vector v, Vector l) => new Vector(
+        /// <summary>
+        /// Calculates the cross product of two vectors.
+        /// </summary>
+        /// <param name="v">The first vector.</param>
+        /// <param name="l">The second vector.</param>
+        /// <returns>The cross product of the two vectors.</returns>
+
         v.Y * l.Z - v.Z * l.Y,
         -(v.X * l.Z - v.Z * l.X),
         v.X * l.Y - v.Y * l.X);
 
-    // Calculate the angle between two vectors
     public static float GetAngle(Vector v, Vector l)
     {
+        /// <summary>
+        /// Calculates the angle between two vectors.
+        /// </summary>
+        /// <param name="v">The first vector.</param>
+        /// <param name="l">The second vector.</param>
+        /// <returns>The angle between the two vectors.</returns>
+
         return (float)Math.Acos(Dot(v, l) / (~v * ~l));
     }
 
-    // Normalize a vector
-    public static Vector Normalize(Vector v) => new Vector(
-        v.X / ~v, v.Y / ~v, v.Z / ~v);
 
-    // Compute the absolute values of a vector
-    public static Vector Abs(Vector v) => new Vector(
-        Math.Abs(v.X), Math.Abs(v.Y), Math.Abs(v.Z));
+    public void Normalize(){
+        /// <summary>
+        /// Normalizes a vector.
+        /// </summary>
+        /// <returns>A normalized vector.</returns>
+
+        var vectorLength = ~this;
+
+        this.X /= vectorLength;
+        this.Y /= vectorLength;
+        this.Z /= vectorLength;
+    }
+
+    public void Abs() {
+        /// <summary>
+        /// Computes the absolute values of a vector.
+        /// </summary>
+        /// <returns>A vector with absolute values.</returns>
+
+        this.X = Math.Abs(this.X);
+        this.Y = Math.Abs(this.Y);
+        this.Z = Math.Abs(this.Z);
+    }
 
     // Overloaded operators
 
-    // Multiply a vector by a scalar
     public static Vector operator *(float k, Vector v) => new Vector(
+        /// <summary>
+        /// Multiplies a vector by a scalar.
+        /// </summary>
+        /// <param name="k">The scalar.</param>
+        /// <param name="v">The vector.</param>
+        /// <returns>The product of the scalar and the vector.</returns>
         k * v.X, k * v.Y, k * v.Z);
 
-    // Multiply a vector by a scalar
     public static Vector operator *(Vector v, float k) => new Vector(
+        /// <summary>
+        /// Multiplies a vector by a scalar.
+        /// </summary>
+        /// <param name="v">The vector.</param>
+        /// <param name="k">The scalar.</param>
+        /// <returns>The product of the scalar and the vector.</returns>
+
         k * v.X, k * v.Y, k * v.Z);
 
-    // Add two vectors
     public static Vector operator +(Vector l, Vector v) => new Vector(
+        /// <summary>
+        /// Adds two vectors.
+        /// </summary>
+        /// <param name="l">The first vector.</param>
+        /// <param name="v">The second vector.</param>
+        /// <returns>The sum of the two vectors.</returns>
+
         l.X + v.X, l.Y + v.Y, l.Z + v.Z);
 
-    // Unary plus operator
     public static Vector operator +(Vector v) => new Vector(
+        /// <summary>
+        /// Returns the vector.
+        /// </summary>
+        /// <param name="v">The vector.</param>
+        /// <returns>The vector.</returns>
         v.X, v.Y, v.Z);
 
-    // Negate a vector
+
     public static Vector operator -(Vector v) => new Vector(
+        /// <summary>
+        /// Negates a vector.
+        /// </summary>
+        /// <param name="v">The vector.</param>
+        /// <returns>The negated vector.</returns>
+
         -1 * v.X, -1 * v.Y, -1 * v.Z);
 
-    // Subtract two vectors
+
     public static Vector operator -(Vector l, Vector v) => new Vector(
+        /// <summary>
+        /// Subtracts two vectors.
+        /// </summary>
+        /// <param name="l">The first vector.</param>
+        /// <param name="v">The second vector.</param>
+        /// <returns>The difference of the two vectors.</returns>
+
         l.X - v.X, l.Y - v.Y, l.Z - v.Z);
 
     // Compute the magnitude of a vector
     public static float operator ~(Vector v) =>
+        /// <summary>
+        /// Computes the magnitude of a vector.
+        /// </summary>
+        /// <param name="v">The vector.</param>
+        /// <returns>The magnitude of the vector.</returns>
+
         (float)Math.Sqrt((v.X * v.X) + (v.Y * v.Y) + (v.Z + v.Z));
 
-    // Override ToString method to provide a string representation of the vector
+
     public override string ToString()
     {
+        /// <summary>
+        /// Returns a string representation of the vector.
+        /// </summary>
+        /// <returns>A string representation of the vector.</returns>
+
         return "x: " + this.X.ToString() +
                " y: " + this.Y.ToString() +
                " z: " + this.Z.ToString();
     }
 
-    // Override Equals method to compare two vectors for equality
     public override bool Equals(object obj)
     {
+        /// <summary>
+        /// Compares two vectors for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current vector.</param>
+        /// <returns>True if the specified object is equal to the current vector; otherwise, false.</returns>
+        /// <exception cref="NullReferenceException">The obj parameter is null.</exception>
+        /// <exception cref="InvalidCastException">The obj parameter is not a Vector object.</exception>
+
         if ((obj == null) || !this.GetType().Equals(obj.GetType()))
         {
             return false;
@@ -125,9 +226,13 @@ public class Vector
         }
     }
 
-    // Override GetHashCode method to generate a hash code for the vector
     public override int GetHashCode()
     {
+        /// <summary>
+        /// Returns the hash code for this vector.
+        /// </summary>
+        /// <returns>A 32-bit signed integer hash code.</returns>
+
         return HashCode.Combine(X, Y, Z);
     }
 }
