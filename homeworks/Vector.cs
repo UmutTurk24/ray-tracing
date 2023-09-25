@@ -99,28 +99,28 @@ public class Vector
     }
 
 
-    public void Normalize(){
+    public static void Normalize(ref Vector vec){
         /// <summary>
         /// Normalizes a vector.
         /// </summary>
         /// <returns>A normalized vector.</returns>
 
-        var vectorLength = ~this;
+        var vectorLength = ~vec;
 
-        this.X /= vectorLength;
-        this.Y /= vectorLength;
-        this.Z /= vectorLength;
+        if (vec._x != 0) vec._x /= vectorLength;
+        if (vec._y != 0) vec._y /= vectorLength;
+        if (vec._z != 0) vec._z /= vectorLength;
     }
 
-    public void Abs() {
+    public static void Abs(ref Vector vec) {
         /// <summary>
         /// Computes the absolute values of a vector.
         /// </summary>
         /// <returns>A vector with absolute values.</returns>
 
-        this.X = Math.Abs(this.X);
-        this.Y = Math.Abs(this.Y);
-        this.Z = Math.Abs(this.Z);
+        vec._x = Math.Abs(vec._x);
+        vec._y = Math.Abs(vec._y);
+        vec._z = Math.Abs(vec._z);
     }
 
     // Overloaded operators
