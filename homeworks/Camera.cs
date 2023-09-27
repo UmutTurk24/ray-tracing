@@ -6,25 +6,18 @@ public class Camera
         Orthographic
     }
 
-    private Projection _projection;
-    private Vector _position;
     private Vector _lookAt;
     private Vector _up;
     private Vector _eye;
     private float _near;
     private float _far;
-    private float _width;
-    private float _height;
+    private int _width;
+    private int _height;
     private float _left;
     private float _right;
     private float _top;
     private float _bottom;
-
-    public Vector Position
-    {
-        get => _position;
-        set => _position = value;
-    }
+    private Projection _projection;
 
     public Vector LookAt
     {
@@ -44,13 +37,6 @@ public class Camera
         set => _eye = value;
     }
 
-
-    public Projection Projection1
-    {
-        get => _projection;
-        set => _projection = value;
-    }
-
     public float Near
     {
         get => _near;
@@ -63,13 +49,13 @@ public class Camera
         set => _far = value;
     }
 
-    public float Width
+    public int Width
     {
         get => _width;
         set => _width = value;
     }
 
-    public float Height
+    public int Height
     {
         get => _height;
         set => _height = value;
@@ -100,7 +86,7 @@ public class Camera
         /// <returns>A new generic orthographic <c>Camera</c> centered at the origin.</returns>
 
         _projection = Projection.Orthographic;
-        _position = new Vector(0, 0, 0);
+        _eye = new Vector(0, 0, 0);
         _lookAt = new Vector(0, 0, -1);
         _up = new Vector(0, 1, 0);
         _near = .1f;
@@ -115,7 +101,7 @@ public class Camera
 
 
     public Camera(Projection projection, Vector eye, Vector lookAt, Vector up, float near = .1f, float far = 10f,
-        float width = 512, float height = 512, float left = -1f, float right = 1f, float bottom = -1f, float top = 1f)
+        int width = 512, int height = 512, float left = -1f, float right = 1f, float bottom = -1f, float top = 1f)
     {
         /// <summary>
         /// Creates a new <c>Camera</c> object with the specified parameters.
@@ -136,7 +122,7 @@ public class Camera
         /// <returns>A new <c>Camera</c> object with the specified parameters.</returns>
         
         _projection = projection;
-        _position = eye;
+        _eye = eye;
         _lookAt = lookAt;
         _up = up;
         _near = near;
@@ -149,12 +135,12 @@ public class Camera
         _top = top;
     }
 
-    public RenderImage() {
+    public void RenderImage() {
 
         
     }
 
-    private OrthographicRender() {
+    private void OrthographicRender() {
         // Find the vector from eye to the pixel
         /// o = eye
         /// u = width
@@ -170,13 +156,15 @@ public class Camera
         Vector colorWhite = new Vector(255, 255, 255);
 
         // Find the vector -w from eye to the pixel
-        Vector w = ((_lookAt - _eye).Normalize()) * (-1);
-        Vector u = (w.Cross(_up)).Normalize();
+        Vector w = (_lookAt - _eye) * (-1);
+        Vector.Normalize(ref w);
+        Vector u = Vector.Cross(w,_up);
+        Vector.Normalize(ref u);
 
         // Find the vector v from eye to the pixel
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < _width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < _height; j++)
             {
                 // Find the relative pixel position
                 // (int uPixel, int vPixel) =
@@ -186,7 +174,7 @@ public class Camera
                 Vector origin = _eye + (i * u) + (j * _up);
 
                 // Normalize the origin point
-                origin = origin.Normalize();
+                Vector.Normalize(ref origin);
 
                 // Define the custom color
                 Vector color = ((1 - origin.X) * colorWhite)
@@ -198,7 +186,7 @@ public class Camera
         }
     }
 
-    private PerspectiveRender()
+    private void PerspectiveRender()
     {
         // Find the vector from eye to the pixel
         /// ray origin -> _Eye
@@ -214,19 +202,21 @@ public class Camera
         Vector colorWhite = new Vector(255, 255, 255);
 
         // Find the vector -w from eye to the pixel
-        Vector w = ((_lookAt - _eye).Normalize()) * (-1);
-        Vector u = (w.Cross(_up)).Normalize();
+        Vector w = (_lookAt - _eye) * (-1);
+        Vector.Normalize(ref w);
+        Vector u = Vector.Cross(w,_up);
+        Vector.Normalize(ref u);
 
         // Find the vector v from eye to the pixel
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < _width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < _height; j++)
             {
                 // Find the relative pixel position
                 Vector direction = (i * u) + (j * _up) - w;
 
                 // Define the custom color
-                Vector color = (1.0 - j) * white + direction.Y * blue;
+                Vector color = (1 - j) * colorWhite + direction.Y * colorBlue;
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -234,11 +224,11 @@ public class Camera
         }
     }
 
-    private spaceToPixelMapping(float left, float right, float bottom, float top, float width, float height, int i, int j)
+    private (float, float) spaceToPixelMapping(float left, float right, float bottom, float top, float width, float height, int i, int j)
     {
-        int mappedU = left + (right - left) * (i) / width;
-        int mappedV = bottom + (top - bottom) * (j) / height;
+        float mappedU = left + (right - left) * (i) / width;
+        float mappedV = bottom + (top - bottom) * (j) / height;
 
-        return mappedU, mappedV;
+        return (mappedU, mappedV);
     }
 }

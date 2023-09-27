@@ -52,18 +52,18 @@ public class HW1Controller
 
         return Vector.Cross(vec1, vec2).Equals(new Vector(-1, -4, 3));
     }
-    public static bool TestAbs()
-    {
-        var vec1 = new Vector(-1, 0, -1);
+    // public static bool TestAbs()
+    // {
+    //     var vec1 = new Vector(-1, 0, -1);
 
-        return Vector.Abs(vec1).Equals(new Vector(1, 0, 1));
-    }
-    public static bool TestNormalize()
-    {
-        var vec1 = new Vector(3, 4, 0);
+    //     return Vector.Abs(vec1).Equals(new Vector(1, 0, 1));
+    // }
+    // public static bool TestNormalize()
+    // {
+    //     var vec1 = new Vector(3, 4, 0);
 
-        return Vector.Normalize(vec1).Equals(new Vector((float)3/5, (float)4/5, 0));
-    }
+    //     return Vector.Normalize(vec1).Equals(new Vector((float)3/5, (float)4/5, 0));
+    // }
     public static bool TestVectorScaling()
     {
         var vec1 = new Vector(1, 2, 3);

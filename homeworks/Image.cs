@@ -6,6 +6,8 @@ using System.Drawing;
 /// Author: Umut Turk
 /// Date: 18 September 2023
 
+using System.Drawing.Imaging;
+
 public class Image
 {
     // Two-dimensional array to store color data
