@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="MyImage.cs" />
+    <Compile Include="Image.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Ray.cs" />

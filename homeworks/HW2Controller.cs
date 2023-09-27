@@ -2,7 +2,8 @@
 public class HW2Controller
 {
     public static void Main() {
-        var c = new Camera();
+        Camera c = new Camera();
+
         c.RenderImage("test.bmp");
     }
 }
