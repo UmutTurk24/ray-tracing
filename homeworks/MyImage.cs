@@ -1,4 +1,3 @@
-using System.Drawing;
 /// <summary>
 /// Represents an image with color data and provides methods to manipulate and save it.
 /// </summary>
@@ -6,8 +5,8 @@ using System.Drawing;
 /// Author: Umut Turk
 /// Date: 18 September 2023
 
-using System.Drawing.Imaging;
-
+using SkiaSharp;
+using Color = SkiaSharp.SKColor;
 public class Image
 {
     // Two-dimensional array to store color data
@@ -62,7 +61,7 @@ public class Image
         this._gamma = gamma;
         _image = new Color[_width, _height];
         for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++)
-            _image[i, j] = Color.Black;
+            _image[i, j] = Color.Parse("000000");
         this._width = _width;
         this._height = _height;
     }
@@ -88,7 +87,9 @@ public class Image
         color.Z = (float) Math.Clamp(color.Z, 0, 255);
 
         // Set the pixel color
-        _image[i,j] = Color.FromArgb(alpha, (int)color.X, (int)color.Y, (int)color.Z);
+        _image[i,j] = new Color(
+            (byte)color.X, (byte)color.Y, (byte)color.Z, (byte)alpha
+        );
     }
 
 
@@ -101,9 +102,10 @@ public class Image
         /// <returns>void</returns>
 
         // Create a Bitmap object for the image
-        Bitmap solution = 
-            new(_width, _height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-
+        // Bitmap solution = 
+        //     new(_width, _height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+        SKImageInfo info = new SKImageInfo(_width, _height, SKColorType.Argb4444);
+        SKBitmap solution = new SKBitmap(info);
         // Calculate the gamma correction factor
         var gammaFactor = 1 / _gamma;
         
@@ -111,16 +113,27 @@ public class Image
         for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
             var color = _image[i,j];
 
-            solution.SetPixel(i,j, Color.FromArgb(
-                (int) Math.Pow(color.R, gammaFactor),
-                (int) Math.Pow(color.G, gammaFactor),
-                (int) Math.Pow(color.B, gammaFactor),
-                color.A
-            ));
+            // Set the color of the pixels into the bitmap
 
+            solution.SetPixel(i, j, new SKColor(
+                (byte)Math.Pow(color.Red, gammaFactor),
+                (byte)Math.Pow(color.Green, gammaFactor),
+                (byte)Math.Pow(color.Blue, gammaFactor),
+                color.Alpha
+            ));
         }
 
-        solution.Save(fileName);
+        using (MemoryStream memStream = new MemoryStream())
+        using (SKManagedWStream wstream = new SKManagedWStream(memStream))
+        {
+            solution.Encode(wstream, 0, 50);
+            byte[] data = memStream.ToArray();
+
+            // Check the data array for content!
+
+            File.WriteAllBytes(fileName, data);
+        }
+
     }
 
     // Override ToString method to provide a string representation of the image, for testing
