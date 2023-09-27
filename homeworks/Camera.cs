@@ -1,6 +1,6 @@
 public class Camera
 {
-    enum Projection
+    public enum Projection
     {
         Perspective,
         Orthographic
@@ -19,6 +19,12 @@ public class Camera
     private float _bottom;
     private Projection _projection;
 
+    public Projection ProjectionType
+    {
+        get => _projection;
+        set => _projection = value;
+    }
+
     public Vector LookAt
     {
         get => _lookAt;
@@ -31,7 +37,7 @@ public class Camera
         set => _up = value;
     }
 
-    private Vector Eye 
+    public Vector Eye 
     {
         get => _eye;
         set => _eye = value;
@@ -135,12 +141,23 @@ public class Camera
         _top = top;
     }
 
-    public void RenderImage() {
-
+    public void RenderImage(String fileName) {
+        Image image;
         
+        if (_projection == Projection.Orthographic) 
+        {
+            image = OrthographicRender();
+        } else if (_projection == Projection.Orthographic) 
+        {
+            image = PerspectiveRender();
+        } else {
+            return;
+        }
+
+        image.SaveImage(fileName);
     }
 
-    private void OrthographicRender() {
+    private Image OrthographicRender() {
         // Find the vector from eye to the pixel
         /// o = eye
         /// u = width
@@ -184,9 +201,11 @@ public class Camera
                 image.Paint(i, j, color);
             }
         }
+
+        return image;
     }
 
-    private void PerspectiveRender()
+    private Image PerspectiveRender()
     {
         // Find the vector from eye to the pixel
         /// ray origin -> _Eye
@@ -222,6 +241,8 @@ public class Camera
                 image.Paint(i, j, color);
             }
         }
+
+        return image;
     }
 
     private (float, float) spaceToPixelMapping(float left, float right, float bottom, float top, float width, float height, int i, int j)
