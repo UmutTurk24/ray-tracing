@@ -10,6 +10,7 @@ public class Camera
     private Vector _position;
     private Vector _lookAt;
     private Vector _up;
+    private Vector _eye;
     private float _near;
     private float _far;
     private float _width;
@@ -36,6 +37,13 @@ public class Camera
         get => _up;
         set => _up = value;
     }
+
+    private Vector Eye 
+    {
+        get => _eye;
+        set => _eye = value;
+    }
+
 
     public Projection Projection1
     {
@@ -144,26 +152,93 @@ public class Camera
     public RenderImage() {
 
         
-        // Calculate the vector from the eye point to the look at point
-        var lookAtVector = _lookAt - _position;
-        // Normalize the look at vector
-        lookAtVector.Normalize();
-
-        // Calculate the vector from the eye point to the up point
-        var upVector = _up - _position;
-        // Normalize the up vector
-        upVector.Normalize();
-
-        // Calculate the vector from the eye point to the right point
-        var rightVector = Vector.Cross(lookAtVector, upVector);
-        // Normalize the right vector
-        rightVector.Normalize();
-
-
     }
 
+    private OrthographicRender() {
+        // Find the vector from eye to the pixel
+        /// o = eye
+        /// u = width
+        /// v = height
+        /// up = camera's up vector
+        /// w = vector from eye to lookAt
+        /// u = find it by cross product of w and up
 
+        // Set up the image to be saved
+        Image image = new Image(_width, _height);
 
+        Vector colorBlue = new Vector(128, 200, 255);
+        Vector colorWhite = new Vector(255, 255, 255);
 
+        // Find the vector -w from eye to the pixel
+        Vector w = ((_lookAt - _eye).Normalize()) * (-1);
+        Vector u = (w.Cross(_up)).Normalize();
 
+        // Find the vector v from eye to the pixel
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                // Find the relative pixel position
+                // (int uPixel, int vPixel) =
+                //     spaceToPixelMapping(_left, _right, _bottom, _top, _width, _height, i, j);
+                
+                // Find the origin of each ray 
+                Vector origin = _eye + (i * u) + (j * _up);
+
+                // Normalize the origin point
+                origin = origin.Normalize();
+
+                // Define the custom color
+                Vector color = ((1 - origin.X) * colorWhite)
+                    + (origin.X * colorBlue);
+
+                // Set the color of the pixel
+                image.Paint(i, j, color);
+            }
+        }
+    }
+
+    private PerspectiveRender()
+    {
+        // Find the vector from eye to the pixel
+        /// ray origin -> _Eye
+        /// ray direction -> uU + vV - W
+        /// u = width
+        /// v = height
+
+        // Set up the image to be saved
+        Image image = new Image(_width, _height);
+
+        // Our lovely colors
+        Vector colorBlue = new Vector(128, 200, 255);
+        Vector colorWhite = new Vector(255, 255, 255);
+
+        // Find the vector -w from eye to the pixel
+        Vector w = ((_lookAt - _eye).Normalize()) * (-1);
+        Vector u = (w.Cross(_up)).Normalize();
+
+        // Find the vector v from eye to the pixel
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                // Find the relative pixel position
+                Vector direction = (i * u) + (j * _up) - w;
+
+                // Define the custom color
+                Vector color = (1.0 - j) * white + direction.Y * blue;
+
+                // Set the color of the pixel
+                image.Paint(i, j, color);
+            }
+        }
+    }
+
+    private spaceToPixelMapping(float left, float right, float bottom, float top, float width, float height, int i, int j)
+    {
+        int mappedU = left + (right - left) * (i) / width;
+        int mappedV = bottom + (top - bottom) * (j) / height;
+
+        return mappedU, mappedV;
+    }
 }
