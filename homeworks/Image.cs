@@ -112,10 +112,10 @@ public class Image
             var color = _image[i,j];
 
             solution.SetPixel(i,j, Color.FromArgb(
+                color.A,
                 (int) Math.Pow(color.R, gammaFactor),
                 (int) Math.Pow(color.G, gammaFactor),
-                (int) Math.Pow(color.B, gammaFactor),
-                color.A
+                (int) Math.Pow(color.B, gammaFactor)
             ));
 
         }
