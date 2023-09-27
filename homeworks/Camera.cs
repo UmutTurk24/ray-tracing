@@ -197,7 +197,7 @@ public class Camera
                 Vector color = ((1 - origin.X) * colorWhite)
                     + (origin.X * colorBlue);
 
-                Console.WriteLine(color);
+                // Console.WriteLine(color);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);

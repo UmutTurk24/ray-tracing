@@ -47,7 +47,7 @@ public class Image
     }
 
 
-    public Image(int _width = 512, int _height = 512, double gamma = 1.0)
+    public Image(int _width = 512, int _height = 512, double gamma = 1.8)
     {
         /// <summary>
         /// Initializes an image with the specified width, height and gamma correction factor.
@@ -111,9 +111,9 @@ public class Image
             
             solution.SetPixel(i,j, Color.FromArgb(
                 color.A,
-                (int) Math.Pow(color.R, gammaFactor),
-                (int) Math.Pow(color.G, gammaFactor),
-                (int) Math.Pow(color.B, gammaFactor)
+                (int) Math.Pow(color.R/255, gammaFactor) * 255,
+                (int) Math.Pow(color.G/255, gammaFactor) * 255,
+                (int) Math.Pow(color.B/255, gammaFactor) * 255
             ));
 
         }
