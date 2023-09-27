@@ -198,7 +198,7 @@ public class Camera
                     + (origin.X * colorBlue);
 
                 // Set the color of the pixel
-                image.Paint(i, j, color);
+                image.Paint(i, j, colorBlue);
             }
         }
 
