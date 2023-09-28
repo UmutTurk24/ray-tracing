@@ -169,6 +169,12 @@ public class Camera
         _right = right;
         _bottom = bottom;
         _top = top;
+
+        _w = _eye - _lookAt;
+        Vector.Normalize(ref _w);
+        _v = _up;
+        Vector.Normalize(ref _v);
+        _u = Vector.Cross(_v, _w);
     }
 
     public void RenderImage(String fileName) {
@@ -177,7 +183,7 @@ public class Camera
         if (_projection == Projection.Orthographic) 
         {
             image = OrthographicRender();
-        } else if (_projection == Projection.Orthographic) 
+        } else if (_projection == Projection.Perspective) 
         {
             image = PerspectiveRender();
         } else {
@@ -188,21 +194,11 @@ public class Camera
     }
 
     private Image OrthographicRender() {
-        // Find the vector from eye to the pixel
-        /// o = eye
-        /// u = width
-        /// v = height
-        /// up = camera's up vector
-        /// w = vector from eye to lookAt
-        /// u = find it by cross product of w and up
-
         // Set up the image to be saved
         Image image = new Image(_width, _height);
 
         Vector colorBlue = new Vector(128, 200, 255);
         Vector colorWhite = new Vector(255, 255, 255);
-
-        // Find the vector v from eye to the pixel
 
         for (int i = 0; i < _width; i++)
         {
@@ -236,7 +232,6 @@ public class Camera
         Vector colorWhite = new Vector(255, 255, 255);
 
         // Find the vector v from eye to the pixel
-
         for (int i = 0; i < _width; i++)
         {
             for (int j = 0; j < _height; j++)
@@ -245,16 +240,11 @@ public class Camera
                 (float u, float v) = spaceToPixelMapping(i,j);
 
                 // Find the origin of each ray 
-                Vector origin = _eye;
-
                 Vector direction = (u * _u) + (v * _v) - _w;
 
-                // Normalize the origin point
-                Vector.Normalize(ref origin);
 
                 // Define the custom color
-                Vector color = ( (float)(1.0 - origin.X) * colorWhite)
-                    + (origin.X * colorBlue);   
+                Vector color = ((float) (1.0 - direction.Y) * colorWhite) + (direction.Y * colorBlue);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
