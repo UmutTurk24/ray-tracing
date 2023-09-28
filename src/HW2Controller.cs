@@ -1,4 +1,9 @@
-
+/// <summary>
+/// Creates a camera with default values
+/// </summary>
+/// Class <c>Computer Graphics</c>
+/// Author: Umut Turk
+/// Date: 18 September 2023
 public class HW2Controller
 {
     public static void Main() {
