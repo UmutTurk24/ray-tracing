@@ -1,14 +1,20 @@
 using System.Drawing;
 using System.Security.Authentication.ExtendedProtection;
-
+/// <summary>
+/// A camera is a device that captures images. It has a position, a viewing direction, and an up vector.
+/// </summary>
+/// Class <c>Computer Graphics</c>
+/// Author: Umut Turk
+/// Date: 28 September 2023
 public class Camera
 {
+
     public enum Projection
     {
         Perspective,
         Orthographic
     }
-
+    // Private fields for camera components
     private Vector _lookAt;
     private Vector _up;
     private Vector _eye;
@@ -24,7 +30,7 @@ public class Camera
     private Vector _v;
     private Vector _w;
     private Projection _projection;
-
+    // Get/Setters for camera components
     public Projection ProjectionType
     {
         get => _projection;
@@ -128,6 +134,7 @@ public class Camera
         _bottom = -1f;
         _top = 1f;
 
+        // Calculate the u,v,w vectors
         _w = _eye - _lookAt;
         Vector.Normalize(ref _w);
         _v = _up;
@@ -170,6 +177,7 @@ public class Camera
         _bottom = bottom;
         _top = top;
 
+        // Calculate the u,v,w vectors
         _w = _eye - _lookAt;
         Vector.Normalize(ref _w);
         _v = _up;
@@ -178,6 +186,11 @@ public class Camera
     }
 
     public void RenderImage(String fileName) {
+        /// <summary>
+        /// Renders the image and saves it to the specified file.
+        /// </summary>
+        /// <param name="fileName">The name of the file to save the image to.</param>
+        /// <returns>void</returns>
         Image image;
         
         if (_projection == Projection.Orthographic) 
@@ -194,9 +207,15 @@ public class Camera
     }
 
     private Image OrthographicRender() {
+        /// <summary>
+        /// Renders the image using orthographic projection.
+        /// </summary>
+        /// <returns>The rendered image.</returns>
+
         // Set up the image to be saved
         Image image = new Image(_width, _height);
 
+        // Magical colors
         Vector colorBlue = new Vector(128, 200, 255);
         Vector colorWhite = new Vector(255, 255, 255);
 
@@ -204,16 +223,15 @@ public class Camera
         {
             for (int j = 0; j < _height; j++)
             {
-                
+                // Translate the pixel coordinates to the space coordinates
                 (float u, float v) = spaceToPixelMapping(i,j);
 
                 // Find the origin of each ray and normalize
                 Vector origin = _eye + (u * _u) + (v * _v);
                 Vector.Normalize(ref origin);
 
-                // Define the array
+                // Define the ray
                 Ray ray = new Ray(origin, -_w);
-                
 
                 // Define the custom color
                 Vector color = ( (float)(1.0 - ray.Origin.X) * colorWhite)
@@ -228,20 +246,27 @@ public class Camera
 
     private Image PerspectiveRender()
     {
+        /// <summary>
+        /// Renders the image using perspective projection.
+        /// </summary>
+        /// <returns>The rendered image.</returns>
+
+        // Set up the image to be saved
         Image image = new Image(_width, _height);
 
+        // Magical colors
         Vector colorBlue = new Vector(128, 200, 255);
         Vector colorWhite = new Vector(255, 255, 255);
 
-        // Find the vector v from eye to the pixel
+
         for (int i = 0; i < _width; i++)
         {
             for (int j = 0; j < _height; j++)
             {
-                
+                // Translate the pixel coordinates to the space coordinates
                 (float u, float v) = spaceToPixelMapping(i,j);
 
-                // Find the origin of each ray 
+                // Find the direction of the ray and define the ray
                 Vector direction = (u * _u) + (v * _v) - _w;
                 Ray ray = new Ray(_eye, direction);
 
@@ -258,6 +283,13 @@ public class Camera
 
     private (float, float) spaceToPixelMapping(int i, int j)
     {
+        /// <summary>
+        /// Maps the pixel coordinates to the space coordinates.
+        /// </summary>
+        /// <param name="i">The x coordinate of the pixel.</param>
+        /// <param name="j">The y coordinate of the pixel.</param>
+        /// <returns>The space coordinates of the pixel.</returns>
+
         float mappedU = _left + (_right - _left) * ((float) (i)) / _width;
         float mappedV = _bottom + (_top - _bottom) * ((float) (j)) / _height;
 
