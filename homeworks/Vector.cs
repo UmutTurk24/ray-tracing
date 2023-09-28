@@ -191,7 +191,7 @@ public class Vector
         /// <param name="v">The vector.</param>
         /// <returns>The magnitude of the vector.</returns>
 
-        (float)Math.Sqrt((v.X * v.X) + (v.Y * v.Y) + (v.Z + v.Z));
+        (float)Math.Sqrt((v.X * v.X) + (v.Y * v.Y) + (v.Z * v.Z));
 
 
     public override string ToString()

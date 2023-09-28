@@ -1,3 +1,6 @@
+using System.Drawing;
+using System.Security.Authentication.ExtendedProtection;
+
 public class Camera
 {
     public enum Projection
@@ -17,6 +20,9 @@ public class Camera
     private float _right;
     private float _top;
     private float _bottom;
+    private Vector _u;
+    private Vector _v;
+    private Vector _w;
     private Projection _projection;
 
     public Projection ProjectionType
@@ -80,6 +86,24 @@ public class Camera
         set => _right = value;
     }
 
+    public Vector U
+    {
+        get => _u;
+        set => _u = value;
+    }
+
+    public Vector V
+    {
+        get => _v;
+        set => _v = value;
+    }
+
+    public Vector W
+    {
+        get => _w;
+        set => _w = value;
+    }
+
 
     
     public Camera()
@@ -103,6 +127,12 @@ public class Camera
         _right = 1f;
         _bottom = -1f;
         _top = 1f;
+
+        _w = _eye - _lookAt;
+        Vector.Normalize(ref _w);
+        _v = _up;
+        Vector.Normalize(ref _v);
+        _u = Vector.Cross(_v, _w);
     }
 
 
@@ -172,72 +202,59 @@ public class Camera
         Vector colorBlue = new Vector(128, 200, 255);
         Vector colorWhite = new Vector(255, 255, 255);
 
-        // Find the vector -w from eye to the pixel
-        Vector w = (_lookAt - _eye) * (-1);
-        Vector.Normalize(ref w);
-        Vector u = Vector.Cross(w,_up);
-        Vector.Normalize(ref u);
-
         // Find the vector v from eye to the pixel
+
         for (int i = 0; i < _width; i++)
         {
             for (int j = 0; j < _height; j++)
             {
-                // Find the relative pixel position
-                // (int uPixel, int vPixel) =
-                //     spaceToPixelMapping(_left, _right, _bottom, _top, _width, _height, i, j);
                 
+                (float u, float v) = spaceToPixelMapping(i,j);
+
                 // Find the origin of each ray 
-                Vector origin = _eye + (i * u) + (j * _up);
+                Vector origin = _eye + (u * _u) + (v * _v);
 
                 // Normalize the origin point
                 Vector.Normalize(ref origin);
 
                 // Define the custom color
-                Vector color = ((1 - origin.X) * colorWhite)
-                    + (origin.X * colorBlue);
-
-                // Console.WriteLine(color);
+                Vector color = ( (float)(1.0 - origin.X) * colorWhite)
+                    + (origin.X * colorBlue);   
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
             }
         }
-
         return image;
     }
 
     private Image PerspectiveRender()
     {
-        // Find the vector from eye to the pixel
-        /// ray origin -> _Eye
-        /// ray direction -> uU + vV - W
-        /// u = width
-        /// v = height
-
-        // Set up the image to be saved
         Image image = new Image(_width, _height);
 
-        // Our lovely colors
         Vector colorBlue = new Vector(128, 200, 255);
         Vector colorWhite = new Vector(255, 255, 255);
 
-        // Find the vector -w from eye to the pixel
-        Vector w = (_lookAt - _eye) * (-1);
-        Vector.Normalize(ref w);
-        Vector u = Vector.Cross(w,_up);
-        Vector.Normalize(ref u);
-
         // Find the vector v from eye to the pixel
+
         for (int i = 0; i < _width; i++)
         {
             for (int j = 0; j < _height; j++)
             {
-                // Find the relative pixel position
-                Vector direction = (i * u) + (j * _up) - w;
+                
+                (float u, float v) = spaceToPixelMapping(i,j);
+
+                // Find the origin of each ray 
+                Vector origin = _eye;
+
+                Vector direction = (u * _u) + (v * _v) - _w;
+
+                // Normalize the origin point
+                Vector.Normalize(ref origin);
 
                 // Define the custom color
-                Vector color = (1 - j) * colorWhite + direction.Y * colorBlue;
+                Vector color = ( (float)(1.0 - origin.X) * colorWhite)
+                    + (origin.X * colorBlue);   
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -247,10 +264,10 @@ public class Camera
         return image;
     }
 
-    private (float, float) spaceToPixelMapping(float left, float right, float bottom, float top, float width, float height, int i, int j)
+    private (float, float) spaceToPixelMapping(int i, int j)
     {
-        float mappedU = left + (right - left) * (i) / width;
-        float mappedV = bottom + (top - bottom) * (j) / height;
+        float mappedU = _left + (_right - _left) * ((float) (i)) / _width;
+        float mappedV = _bottom + (_top - _bottom) * ((float) (j)) / _height;
 
         return (mappedU, mappedV);
     }

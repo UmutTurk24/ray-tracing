@@ -60,7 +60,7 @@ public class Image
         this._gamma = gamma;
         _image = new Color[_width, _height];
         for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++)
-            _image[i, j] = Color.Blue;
+            _image[i, j] = Color.Black;
         this._width = _width;
         this._height = _height;
     }
@@ -84,7 +84,7 @@ public class Image
         color.X = (float) Math.Clamp(color.X, 0, 255);
         color.Y = (float) Math.Clamp(color.Y, 0, 255);
         color.Z = (float) Math.Clamp(color.Z, 0, 255);
-        
+    
         // Set the pixel color
         _image[i,j] = Color.FromArgb(alpha, (int)color.X, (int)color.Y, (int)color.Z);
     }
@@ -108,14 +108,17 @@ public class Image
         // Copy color data from the image array to the Bitmap with the Gamma Correction
         for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
             var color = _image[i,j];
+
+            // Console.WriteLine(Math.Pow(color.R/255, gammaFactor) * 255);
+            // Console.WriteLine(Math.Pow(color.R/255, gammaFactor) * 255);
+            // Console.WriteLine(Math.Pow(color.R/255, gammaFactor) * 255);
             
             solution.SetPixel(i,j, Color.FromArgb(
                 color.A,
-                (int) Math.Pow(color.R/255, gammaFactor) * 255,
-                (int) Math.Pow(color.G/255, gammaFactor) * 255,
-                (int) Math.Pow(color.B/255, gammaFactor) * 255
+                (int) (Math.Pow(color.R/255.0, gammaFactor) * 255),
+                (int) (Math.Pow(color.G/255.0, gammaFactor) * 255),
+                (int) (Math.Pow(color.B/255.0, gammaFactor) * 255)
             ));
-
         }
 
         solution.Save(fileName);
