@@ -1,9 +1,11 @@
 /// <summary>
-/// Creates a camera with default values
+/// Controller for Hw2
 /// </summary>
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
-/// Date: 18 September 2023
+/// Date: 28 September 2023
+/// Time spent: ~4 hours
+
 public class HW2Controller
 {
     public static void Main() {
