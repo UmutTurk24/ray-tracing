@@ -207,15 +207,17 @@ public class Camera
                 
                 (float u, float v) = spaceToPixelMapping(i,j);
 
-                // Find the origin of each ray 
+                // Find the origin of each ray and normalize
                 Vector origin = _eye + (u * _u) + (v * _v);
-
-                // Normalize the origin point
                 Vector.Normalize(ref origin);
 
+                // Define the array
+                Ray ray = new Ray(origin, -_w);
+                
+
                 // Define the custom color
-                Vector color = ( (float)(1.0 - origin.X) * colorWhite)
-                    + (origin.X * colorBlue);   
+                Vector color = ( (float)(1.0 - ray.Origin.X) * colorWhite)
+                    + (ray.Origin.X * colorBlue);   
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -241,10 +243,10 @@ public class Camera
 
                 // Find the origin of each ray 
                 Vector direction = (u * _u) + (v * _v) - _w;
-
+                Ray ray = new Ray(_eye, direction);
 
                 // Define the custom color
-                Vector color = ((float) (1.0 - direction.Y) * colorWhite) + (direction.Y * colorBlue);
+                Vector color = ((float) (1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
