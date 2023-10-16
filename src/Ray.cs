@@ -22,10 +22,11 @@ public class Ray
     public Vector Direction
     {
         get => _direction;
-        set => {
-            _direction = value;
-            Vector.Normalize(_direction);
-            }
+        set {
+             _direction = value;
+             Vector.Normalize(ref _direction);
+
+        }            
     }
 
     public Ray(Vector origin, Vector direction)
