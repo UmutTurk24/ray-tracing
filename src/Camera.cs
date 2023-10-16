@@ -110,9 +110,6 @@ public class Camera
         get => _w;
         set => _w = value;
     }
-
-
-    
     public Camera()
     {
         /// <summary>
@@ -266,7 +263,6 @@ public class Camera
             {
                 // Translate the pixel coordinates to the space coordinates
                 (float u, float v) = spaceToPixelMapping(i,j);
-
 
                 // Find the direction of the ray and define the ray
                 Vector direction = (u * _u) + (v * _v) - _w;
