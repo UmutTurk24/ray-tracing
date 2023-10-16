@@ -30,6 +30,7 @@ public class Camera
     private Vector _v;
     private Vector _w;
     private Projection _projection;
+
     // Get/Setters for camera components
     public Projection ProjectionType
     {
@@ -135,11 +136,7 @@ public class Camera
         _top = 1f;
 
         // Calculate the u,v,w vectors
-        _w = _eye - _lookAt;
-        Vector.Normalize(ref _w);
-        _v = _up;
-        Vector.Normalize(ref _v);
-        _u = Vector.Cross(_v, _w);
+        CalculateCameraVectors();
     }
 
 
@@ -178,6 +175,10 @@ public class Camera
         _top = top;
 
         // Calculate the u,v,w vectors
+        CalculateCameraVectors();
+    }
+
+    private void CalculateCameraVectors() {
         _w = _eye - _lookAt;
         Vector.Normalize(ref _w);
         _v = _up;
@@ -266,9 +267,10 @@ public class Camera
                 // Translate the pixel coordinates to the space coordinates
                 (float u, float v) = spaceToPixelMapping(i,j);
 
+
                 // Find the direction of the ray and define the ray
                 Vector direction = (u * _u) + (v * _v) - _w;
-                Ray ray = new Ray(_eye, direction);
+                Ray ray = new Ray(_eye, -direction);
 
                 // Define the custom color
                 Vector color = ((float) (1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);

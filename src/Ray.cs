@@ -35,6 +35,7 @@ public class Ray
         /// <returns>A ray with the specified origin and direction.</returns>
 
         _origin = origin;
+        Vector.Normalize(ref direction);
         _direction = direction;
     }
 
