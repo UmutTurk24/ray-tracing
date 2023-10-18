@@ -6,7 +6,7 @@ using System.Security.Authentication.ExtendedProtection;
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
 /// Date: 28 September 2023
-public class Camera
+public class TestCamera
 {
 
     public enum Projection
@@ -15,9 +15,9 @@ public class Camera
         Orthographic
     }
     // Private fields for camera components
-    private Vector _lookAt;
-    private Vector _up;
-    private Vector _eye;
+    private TestVector _lookAt;
+    private TestVector _up;
+    private TestVector _eye;
     private float _near;
     private float _far;
     private int _width;
@@ -26,9 +26,9 @@ public class Camera
     private float _right;
     private float _top;
     private float _bottom;
-    private Vector _u;
-    private Vector _v;
-    private Vector _w;
+    private TestVector _u;
+    private TestVector _v;
+    private TestVector _w;
     private Projection _projection;
 
     // Get/Setters for camera components
@@ -38,19 +38,19 @@ public class Camera
         set => _projection = value;
     }
 
-    public Vector LookAt
+    public TestVector LookAt
     {
         get => _lookAt;
         set => _lookAt = value;
     }
 
-    public Vector Up
+    public TestVector Up
     {
         get => _up;
         set => _up = value;
     }
 
-    public Vector Eye 
+    public TestVector Eye 
     {
         get => _eye;
         set => _eye = value;
@@ -105,36 +105,36 @@ public class Camera
         set => _top = value;
     }
 
-    public Vector U
+    public TestVector U
     {
         get => _u;
         set => _u = value;
     }
 
-    public Vector V
+    public TestVector V
     {
         get => _v;
         set => _v = value;
     }
 
-    public Vector W
+    public TestVector W
     {
         get => _w;
         set => _w = value;
     }
-    public Camera()
+    public TestCamera()
     {
         /// <summary>
         /// Creates a new generic
-        /// orthographic <c>Camera</c> centered at the origin. The generated image
+        /// orthographic <c>TestCamera</c> centered at the origin. The generated image
         /// plane is 512 x 512 pixels and the viewing frustum is 2 x 2 units.
         /// </summary>
-        /// <returns>A new generic orthographic <c>Camera</c> centered at the origin.</returns>
+        /// <returns>A new generic orthographic <c>TestCamera</c> centered at the origin.</returns>
 
         _projection = Projection.Orthographic;
-        _eye = new Vector(0, 0, 0);
-        _lookAt = new Vector(0, 0, -1);
-        _up = new Vector(0, 1, 0);
+        _eye = new TestVector(0, 0, 0);
+        _lookAt = new TestVector(0, 0, -1);
+        _up = new TestVector(0, 1, 0);
         _near = .1f;
         _far = 10f;
         _width = 512;
@@ -149,11 +149,11 @@ public class Camera
     }
 
 
-    public Camera(Projection projection, Vector eye, Vector lookAt, Vector up, float near = .1f, float far = 10f,
+    public TestCamera(Projection projection, TestVector eye, TestVector lookAt, TestVector up, float near = .1f, float far = 10f,
         int width = 512, int height = 512, float left = -1f, float right = 1f, float bottom = -1f, float top = 1f)
     {
         /// <summary>
-        /// Creates a new <c>Camera</c> object with the specified parameters.
+        /// Creates a new <c>TestCamera</c> object with the specified parameters.
         /// </summary>
         /// <param name="projection">The projection type for the camera (e.g., Perspective, Orthographic).</param>
         /// <param name="eye">The position of the camera’s eye point in world coordinates.</param>
@@ -168,7 +168,7 @@ public class Camera
         /// <param name="bottom">The bottom boundary of the camera’s viewing frustum(default: -1.0).</param>
         /// <param name="top">The top boundary of the camera’s viewing frustum (default: 1.0).</param>
         /// </summary>
-        /// <returns>A new <c>Camera</c> object with the specified parameters.</returns>
+        /// <returns>A new <c>TestCamera</c> object with the specified parameters.</returns>
         
         _projection = projection;
         _eye = eye;
@@ -189,11 +189,11 @@ public class Camera
 
     private void CalculateCameraVectors() {
         _w = _eye - _lookAt;
-        Vector.Normalize(ref _w);
+        TestVector.Normalize(ref _w);
         _v = _up;
-        Vector.Normalize(ref _v);
-        _u = Vector.Cross(_v, _w);
-        Vector.Normalize(ref _u);
+        TestVector.Normalize(ref _v);
+        _u = TestVector.Cross(_v, _w);
+        TestVector.Normalize(ref _u);
     }
 
     public void RenderImage(String fileName) {
@@ -202,7 +202,7 @@ public class Camera
         /// </summary>
         /// <param name="fileName">The name of the file to save the image to.</param>
         /// <returns>void</returns>
-        Image image;
+        TestImage image;
         
         if (_projection == Projection.Orthographic) 
         {
@@ -217,18 +217,18 @@ public class Camera
         image.SaveImage(fileName);
     }
 
-    private Image OrthographicRender() {
+    private TestImage OrthographicRender() {
         /// <summary>
         /// Renders the image using orthographic projection.
         /// </summary>
         /// <returns>The rendered image.</returns>
 
         // Set up the image to be saved
-        Image image = new Image(_width, _height);
+        TestImage image = new TestImage(_width, _height);
 
         // Magical colors
-        Vector colorBlue = new Vector(128, 200, 255);
-        Vector colorWhite = new Vector(255, 255, 255);
+        TestVector colorBlue = new TestVector(128, 200, 255);
+        TestVector colorWhite = new TestVector(255, 255, 255);
 
         for (int i = 0; i < _width; i++)
         {
@@ -238,14 +238,14 @@ public class Camera
                 (float u, float v) = spaceToPixelMapping(i,j);
 
                 // Find the origin of each ray and normalize
-                Vector origin = _eye + (u * _u) + (v * _v);
-                Vector.Normalize(ref origin);
+                TestVector origin = _eye + (u * _u) + (v * _v);
+                TestVector.Normalize(ref origin);
 
                 // Define the ray
-                Ray ray = new Ray(origin, -_w);
+                TestRay ray = new TestRay(origin, -_w);
 
                 // Define the custom color
-                Vector color = ( (float)(1.0 - ray.Origin.X) * colorWhite)
+                TestVector color = ( (float)(1.0 - ray.Origin.X) * colorWhite)
                     + (ray.Origin.X * colorBlue);   
 
                 // Set the color of the pixel
@@ -255,7 +255,7 @@ public class Camera
         return image;
     }
 
-    private Image PerspectiveRender()
+    private TestImage PerspectiveRender()
     {
         /// <summary>
         /// Renders the image using perspective projection.
@@ -263,11 +263,11 @@ public class Camera
         /// <returns>The rendered image.</returns>
 
         // Set up the image to be saved
-        Image image = new Image(_width, _height);
+        TestImage image = new TestImage(_width, _height);
 
         // Magical colors
-        Vector colorBlue = new Vector(128, 200, 255);
-        Vector colorWhite = new Vector(255, 255, 255);
+        TestVector colorBlue = new TestVector(128, 200, 255);
+        TestVector colorWhite = new TestVector(255, 255, 255);
 
 
         for (int i = 0; i < _width; i++)
@@ -278,11 +278,11 @@ public class Camera
                 (float u, float v) = spaceToPixelMapping(i,j);
 
                 // Find the direction of the ray and define the ray
-                Vector direction = (u * _u) + (v * _v) - _w;
-                Ray ray = new Ray(_eye, -direction);
+                TestVector direction = (u * _u) + (v * _v) - _w;
+                TestRay ray = new TestRay(_eye, -direction);
 
                 // Define the custom color
-                Vector color = ((float) (1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);
+                TestVector color = ((float) (1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);

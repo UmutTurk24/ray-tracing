@@ -7,7 +7,7 @@ using System.Net.Mail;
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
 /// Date: 18 September 2023
-public class Vector
+public class TestVector
 {
     // Private fields for vector components
     private float _x;
@@ -33,7 +33,7 @@ public class Vector
         set { _z = value; }
     }
 
-    public Vector()
+    public TestVector()
     {
         /// <summary>
         /// Initializes a vector to (0, 0, 0).
@@ -45,7 +45,7 @@ public class Vector
         this._z = 0;
     }
 
-    public Vector(float _x, float _y, float _z)
+    public TestVector(float _x, float _y, float _z)
     {
         /// <summary>
         /// Initializes a vector with the specified components.
@@ -62,7 +62,7 @@ public class Vector
 
     // Static methods for vector operations
 
-    public static float Dot(Vector v, Vector l)
+    public static float Dot(TestVector v, TestVector l)
     {
         /// <summary>
         /// Calculates the dot product of two vectors.
@@ -74,7 +74,7 @@ public class Vector
         return (v.X * l.X) + (v.Y * l.Y) + (v.Z * l.Z);
     }
 
-    public static Vector Cross(Vector v, Vector l) => new Vector(
+    public static TestVector Cross(TestVector v, TestVector l) => new TestVector(
         /// <summary>
         /// Calculates the cross product of two vectors.
         /// </summary>
@@ -86,7 +86,7 @@ public class Vector
         -(v.X * l.Z - v.Z * l.X),
         v.X * l.Y - v.Y * l.X);
 
-    public static float GetAngle(Vector v, Vector l)
+    public static float GetAngle(TestVector v, TestVector l)
     {
         /// <summary>
         /// Calculates the angle between two vectors.
@@ -99,7 +99,7 @@ public class Vector
     }
 
 
-    public static void Normalize(ref Vector vec){
+    public static void Normalize(ref TestVector vec){
         /// <summary>
         /// Normalizes a vector.
         /// </summary>
@@ -115,7 +115,7 @@ public class Vector
         
     }
 
-    public static void Abs(ref Vector vec) {
+    public static void Abs(ref TestVector vec) {
         /// <summary>
         /// Computes the absolute values of a vector.
         /// </summary>
@@ -128,7 +128,7 @@ public class Vector
 
     // Overloaded operators
 
-    public static Vector operator *(float k, Vector v) => new Vector(
+    public static TestVector operator *(float k, TestVector v) => new TestVector(
         /// <summary>
         /// Multiplies a vector by a scalar.
         /// </summary>
@@ -137,7 +137,7 @@ public class Vector
         /// <returns>The product of the scalar and the vector.</returns>
         k * v.X, k * v.Y, k * v.Z);
 
-    public static Vector operator *(Vector v, float k) => new Vector(
+    public static TestVector operator *(TestVector v, float k) => new TestVector(
         /// <summary>
         /// Multiplies a vector by a scalar.
         /// </summary>
@@ -147,7 +147,7 @@ public class Vector
 
         k * v.X, k * v.Y, k * v.Z);
 
-    public static Vector operator +(Vector l, Vector v) => new Vector(
+    public static TestVector operator +(TestVector l, TestVector v) => new TestVector(
         /// <summary>
         /// Adds two vectors.
         /// </summary>
@@ -157,7 +157,7 @@ public class Vector
 
         l.X + v.X, l.Y + v.Y, l.Z + v.Z);
 
-    public static Vector operator +(Vector v) => new Vector(
+    public static TestVector operator +(TestVector v) => new TestVector(
         /// <summary>
         /// Returns the vector.
         /// </summary>
@@ -166,7 +166,7 @@ public class Vector
         v.X, v.Y, v.Z);
 
 
-    public static Vector operator -(Vector v) => new Vector(
+    public static TestVector operator -(TestVector v) => new TestVector(
         /// <summary>
         /// Negates a vector.
         /// </summary>
@@ -176,7 +176,7 @@ public class Vector
         -1 * v.X, -1 * v.Y, -1 * v.Z);
 
 
-    public static Vector operator -(Vector l, Vector v) => new Vector(
+    public static TestVector operator -(TestVector l, TestVector v) => new TestVector(
         /// <summary>
         /// Subtracts two vectors.
         /// </summary>
@@ -187,7 +187,7 @@ public class Vector
         l.X - v.X, l.Y - v.Y, l.Z - v.Z);
 
     // Compute the magnitude of a vector
-    public static float operator ~(Vector v) =>
+    public static float operator ~(TestVector v) =>
         /// <summary>
         /// Computes the magnitude of a vector.
         /// </summary>
@@ -217,14 +217,14 @@ public class Vector
         /// <param name="obj">The object to compare with the current vector.</param>
         /// <returns>True if the specified object is equal to the current vector; otherwise, false.</returns>
         /// <exception cref="NullReferenceException">The obj parameter is null.</exception>
-        /// <exception cref="InvalidCastException">The obj parameter is not a Vector object.</exception>
+        /// <exception cref="InvalidCastException">The obj parameter is not a TestVector object.</exception>
 
         if ((obj == null) || !this.GetType().Equals(obj.GetType()))
         {
             return false;
         } else
         {
-            Vector p = (Vector)obj;
+            TestVector p = (TestVector)obj;
             return (this.X == p.X) && (this.Y == p.Y) && (this.Z == p.Z);
         }
     }
