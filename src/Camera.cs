@@ -292,6 +292,44 @@ public class Camera
         return image;
     }
 
+    private Ray? GetRay(float u, float v)
+    {
+        if (_projection == Projection.Perspective)
+        {
+            // Calculate the direction of the ray for perspective projection
+            Vector direction = (u * _u) + (v * _v) - _w;
+            return new Ray(_eye, direction);
+        }
+        else if (_projection == Projection.Orthographic)
+        {
+            // Calculate the direction of the ray for orthographic projection
+            Vector origin = _eye + (u * _u) + (v * _v);
+            Vector direction = -_w;
+            return new Ray(origin, direction);
+        }
+        return null;
+    }
+
+    private Vector GetCustomColor(Ray ray)
+    {
+        Vector colorBlue = new Vector(128, 200, 255);
+        Vector colorWhite = new Vector(255, 255, 255);
+
+        if (_projection == Projection.Perspective)
+        {
+            // Define the custom color for perspective projection
+            Vector color = ((float)(1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);
+            return color;
+        }
+        else if (_projection == Projection.Orthographic)
+        {
+            // Define the custom color for orthographic projection
+            Vector color = ((float)(1.0 - ray.Origin.X) * colorWhite) + (ray.Origin.X * colorBlue);
+            return color;
+        }
+        return new Vector (0,0,0);
+    }
+
     private (float, float) spaceToPixelMapping(int i, int j)
     {
         /// <summary>
