@@ -226,10 +226,6 @@ public class Camera
         // Set up the image to be saved
         Image image = new Image(_width, _height);
 
-        // Magical colors
-        Vector colorBlue = new Vector(128, 200, 255);
-        Vector colorWhite = new Vector(255, 255, 255);
-
         for (int i = 0; i < _width; i++)
         {
             for (int j = 0; j < _height; j++)
@@ -237,16 +233,9 @@ public class Camera
                 // Translate the pixel coordinates to the space coordinates
                 (float u, float v) = spaceToPixelMapping(i,j);
 
-                // Find the origin of each ray and normalize
-                Vector origin = _eye + (u * _u) + (v * _v);
-                Vector.Normalize(ref origin);
+                Ray ray = GetRay(u,v);
 
-                // Define the ray
-                Ray ray = new Ray(origin, -_w);
-
-                // Define the custom color
-                Vector color = ( (float)(1.0 - ray.Origin.X) * colorWhite)
-                    + (ray.Origin.X * colorBlue);   
+                Vector color = GetCustomColor(ray);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -265,11 +254,6 @@ public class Camera
         // Set up the image to be saved
         Image image = new Image(_width, _height);
 
-        // Magical colors
-        Vector colorBlue = new Vector(128, 200, 255);
-        Vector colorWhite = new Vector(255, 255, 255);
-
-
         for (int i = 0; i < _width; i++)
         {
             for (int j = 0; j < _height; j++)
@@ -277,12 +261,9 @@ public class Camera
                 // Translate the pixel coordinates to the space coordinates
                 (float u, float v) = spaceToPixelMapping(i,j);
 
-                // Find the direction of the ray and define the ray
-                Vector direction = (u * _u) + (v * _v) - _w;
-                Ray ray = new Ray(_eye, direction);
+                Ray ray = GetRay(u,v);
 
-                // Define the custom color
-                Vector color = ((float) (1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);
+                Vector color = GetCustomColor(ray);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -292,7 +273,7 @@ public class Camera
         return image;
     }
 
-    private Ray? GetRay(float u, float v)
+    private Ray GetRay(float u, float v)
     {
         if (_projection == Projection.Perspective)
         {
@@ -307,7 +288,11 @@ public class Camera
             Vector direction = -_w;
             return new Ray(origin, direction);
         }
-        return null;
+
+        return new Ray(
+            new Vector(0,0,0),
+            new Vector(0,0,0)
+        );
     }
 
     private Vector GetCustomColor(Ray ray)
@@ -324,7 +309,9 @@ public class Camera
         else if (_projection == Projection.Orthographic)
         {
             // Define the custom color for orthographic projection
-            Vector color = ((float)(1.0 - ray.Origin.X) * colorWhite) + (ray.Origin.X * colorBlue);
+            Vector normalizedOrigin = ray.Origin;
+            Vector.Normalize(ref normalizedOrigin);
+            Vector color = ((float)(1.0 - normalizedOrigin.X) * colorWhite) + (normalizedOrigin.X * colorBlue);
             return color;
         }
         return new Vector (0,0,0);
@@ -339,8 +326,8 @@ public class Camera
         /// <param name="j">The y coordinate of the pixel.</param>
         /// <returns>The space coordinates of the pixel.</returns>
 
-        float mappedU = _left + (_right - _left) * ((float) (i)) / _width;
-        float mappedV = _bottom + (_top - _bottom) * ((float) (j)) / _height;
+        float mappedU = _left + (_right - _left) * i / _width;
+        float mappedV = _bottom + (_top - _bottom) * j / _height;
 
         return (mappedU, mappedV);
     }
