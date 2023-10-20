@@ -190,10 +190,10 @@ public class Camera
     private void CalculateCameraVectors() {
         _w = _eye - _lookAt;
         Vector.Normalize(ref _w);
-        _v = _up;
-        Vector.Normalize(ref _v);
-        _u = Vector.Cross(_v, _w);
+        _u = Vector.Cross(_up, _w);
         Vector.Normalize(ref _u);
+        _v = Vector.Cross(_w, _u);
+        Vector.Normalize(ref _v);
     }
 
     public void RenderImage(String fileName) {
@@ -279,7 +279,7 @@ public class Camera
 
                 // Find the direction of the ray and define the ray
                 Vector direction = (u * _u) + (v * _v) - _w;
-                Ray ray = new Ray(_eye, -direction);
+                Ray ray = new Ray(_eye, direction);
 
                 // Define the custom color
                 Vector color = ((float) (1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);

@@ -108,16 +108,12 @@ public class Image
         // Copy color data from the image array to the Bitmap with the Gamma Correction
         for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
             var color = _image[i,j];
-
-            // Console.WriteLine(Math.Pow(color.R/255, gammaFactor) * 255);
-            // Console.WriteLine(Math.Pow(color.R/255, gammaFactor) * 255);
-            // Console.WriteLine(Math.Pow(color.R/255, gammaFactor) * 255);
             
             solution.SetPixel(i,j, Color.FromArgb(
                 color.A,
-                (int) (Math.Pow(color.R/255.0, gammaFactor) * 255),
-                (int) (Math.Pow(color.G/255.0, gammaFactor) * 255),
-                (int) (Math.Pow(color.B/255.0, gammaFactor) * 255)
+                (int) (Math.Pow(color.R/255.0, 1/gammaFactor) * 255),
+                (int) (Math.Pow(color.G/255.0, 1/gammaFactor) * 255),
+                (int) (Math.Pow(color.B/255.0, 1/gammaFactor) * 255)
             ));
         }
 
