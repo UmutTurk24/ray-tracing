@@ -5,7 +5,7 @@ using System.Security.Authentication.ExtendedProtection;
 /// </summary>
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
-/// Date: 28 September 2023
+/// Date: 20 October 2023
 public class Camera
 {
 
