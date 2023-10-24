@@ -231,11 +231,11 @@ public class Camera
             for (int j = 0; j < _height; j++)
             {
                 // Translate the pixel coordinates to the space coordinates
-                (float u, float v) = spaceToPixelMapping(i,j);
+                (float u, float v) = SpaceToPixelMapping(i,j);
 
-                Ray ray = GetRay(u,v);
+                Ray ray = ConstructRay(u,v);
 
-                Vector color = GetCustomColor(ray);
+                Vector color = CreatePixelColor(ray);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -259,11 +259,11 @@ public class Camera
             for (int j = 0; j < _height; j++)
             {
                 // Translate the pixel coordinates to the space coordinates
-                (float u, float v) = spaceToPixelMapping(i,j);
+                (float u, float v) = SpaceToPixelMapping(i,j);
 
-                Ray ray = GetRay(u,v);
+                Ray ray = ConstructRay(u,v);
 
-                Vector color = GetCustomColor(ray);
+                Vector color = CreatePixelColor(ray);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -273,7 +273,7 @@ public class Camera
         return image;
     }
 
-    private Ray GetRay(float u, float v)
+    private Ray ConstructRay(float u, float v)
     {
         if (_projection == Projection.Perspective)
         {
@@ -295,29 +295,31 @@ public class Camera
         );
     }
 
-    private Vector GetCustomColor(Ray ray)
+    private Vector CreatePixelColor(Ray ray)
     {
-        Vector colorBlue = new Vector(128, 200, 255);
-        Vector colorWhite = new Vector(255, 255, 255);
 
-        if (_projection == Projection.Perspective)
-        {
-            // Define the custom color for perspective projection
-            Vector color = ((float)(1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);
-            return color;
-        }
-        else if (_projection == Projection.Orthographic)
-        {
-            // Define the custom color for orthographic projection
-            Vector normalizedOrigin = ray.Origin;
-            Vector.Normalize(ref normalizedOrigin);
-            Vector color = ((float)(1.0 - normalizedOrigin.X) * colorWhite) + (normalizedOrigin.X * colorBlue);
-            return color;
-        }
-        return new Vector (0,0,0);
+
+        // Vector pixelColor = color*(_far-t)/ _far;
+        return new Vector(0,0,0); 
+
+        // if (_projection == Projection.Perspective)
+        // {
+        //     // Define the custom color for perspective projection
+        //     Vector color = ((float)(1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);
+        //     return color;
+        // }
+        // else if (_projection == Projection.Orthographic)
+        // {
+        //     // Define the custom color for orthographic projection
+        //     Vector normalizedOrigin = ray.Origin;
+        //     Vector.Normalize(ref normalizedOrigin);
+        //     Vector color = ((float)(1.0 - normalizedOrigin.X) * colorWhite) + (normalizedOrigin.X * colorBlue);
+        //     return color;
+        // }
+        // return new Vector (0,0,0);
     }
 
-    private (float, float) spaceToPixelMapping(int i, int j)
+    private (float, float) SpaceToPixelMapping(int i, int j)
     {
         /// <summary>
         /// Maps the pixel coordinates to the space coordinates.
