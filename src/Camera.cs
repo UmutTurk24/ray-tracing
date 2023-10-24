@@ -306,7 +306,7 @@ public class Camera
             float distance = shape.Hit(ray);
             if (distance > minDistance) 
             {
-                color = shape.GetColor();
+                color = shape.DiffuseColor;
                 minDistance = distance;
             }
             // minDistance =  minDistance > distance ? distance : minDistance;

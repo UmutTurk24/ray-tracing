@@ -1,15 +1,17 @@
 public abstract class Shape
 {    
-    Vector _color;
+    private Vector _color = new Vector(0f,0f,0f);
     public virtual Vector GetColor()
     {
         return new Vector(0f,0f,0f);
     }
 
-    public virtual void DiffuseColor(Vector color)
+    public Vector DiffuseColor
     {
-        _color = color;
+        get => _color;
+        set => _color = value;
     }
+
     ///<summary> Determins if the shape object has been hit by the ray input.</summary>
     /// <param name="r">The ray.</param>
     /// <return> The intersection distiance from the ray origin. Return infinity if

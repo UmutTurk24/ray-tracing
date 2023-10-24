@@ -11,7 +11,7 @@ class Sphere : Shape
     private float _radius;
 
     private Vector _center;
-    private Vector _color;
+
 
     // Get Setters
     public float Radius
@@ -37,7 +37,6 @@ class Sphere : Shape
 
         _center = center;
         _radius = radius;
-        _color = new Vector(0f, 0f, 0f);
     }
 
     public override float Hit(Ray r)
@@ -100,13 +99,4 @@ class Sphere : Shape
         return normal;
     }
 
-    public override Vector GetColor()
-    {
-        return _color;
-    }
-
-    public void DiffuseColor(Vector p)
-    {   
-        _color = p;
-    }
 }
