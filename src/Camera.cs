@@ -196,7 +196,7 @@ public class Camera
         Vector.Normalize(ref _v);
     }
 
-    public void RenderImage(String fileName) {
+    public void RenderImage(String fileName, Scene scene) {
         /// <summary>
         /// Renders the image and saves it to the specified file.
         /// </summary>
@@ -206,10 +206,10 @@ public class Camera
         
         if (_projection == Projection.Orthographic) 
         {
-            image = OrthographicRender();
+            image = OrthographicRender(scene);
         } else if (_projection == Projection.Perspective) 
         {
-            image = PerspectiveRender();
+            image = PerspectiveRender(scene);
         } else {
             return;
         }
@@ -217,7 +217,7 @@ public class Camera
         image.SaveImage(fileName);
     }
 
-    private Image OrthographicRender() {
+    private Image OrthographicRender(Scene scene) {
         /// <summary>
         /// Renders the image using orthographic projection.
         /// </summary>
@@ -235,7 +235,7 @@ public class Camera
 
                 Ray ray = ConstructRay(u,v);
 
-                Vector color = CreatePixelColor(ray);
+                Vector color = CreatePixelColor(ray, scene);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -244,7 +244,7 @@ public class Camera
         return image;
     }
 
-    private Image PerspectiveRender()
+    private Image PerspectiveRender(Scene scene)
     {
         /// <summary>
         /// Renders the image using perspective projection.
@@ -263,7 +263,7 @@ public class Camera
 
                 Ray ray = ConstructRay(u,v);
 
-                Vector color = CreatePixelColor(ray);
+                Vector color = CreatePixelColor(ray, scene);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -295,12 +295,27 @@ public class Camera
         );
     }
 
-    private Vector CreatePixelColor(Ray ray)
+    private Vector CreatePixelColor(Ray ray, Scene scene)
     {
+        Vector color = new Vector(0,0,0);
+        float minDistance = float.PositiveInfinity;
 
 
-        // Vector pixelColor = color*(_far-t)/ _far;
-        return new Vector(0,0,0); 
+        foreach (Shape shape in scene)
+        {
+            float distance = shape.Hit(ray);
+            if (distance > minDistance) 
+            {
+                color = shape.GetColor();
+                minDistance = distance;
+            }
+            // minDistance =  minDistance > distance ? distance : minDistance;
+            // return (distance1 < distance2) ? distance1 : distance2;
+        }
+
+        Vector pixelColor = color * ((_far - minDistance)/_far);
+
+        return pixelColor;
 
         // if (_projection == Projection.Perspective)
         // {

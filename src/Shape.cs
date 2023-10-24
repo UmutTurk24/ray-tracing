@@ -1,5 +1,15 @@
 public abstract class Shape
 {    
+    Vector _color;
+    public virtual Vector GetColor()
+    {
+        return new Vector(0f,0f,0f);
+    }
+
+    public virtual void DiffuseColor(Vector color)
+    {
+        _color = color;
+    }
     ///<summary> Determins if the shape object has been hit by the ray input.</summary>
     /// <param name="r">The ray.</param>
     /// <return> The intersection distiance from the ray origin. Return infinity if
@@ -11,6 +21,5 @@ public abstract class Shape
     /// <return> A vector of the normal of the object at that point. </return>
     public abstract Vector Normal(Vector p);
 
-    public abstract void DiffuseColor(Vector p);
 }
 

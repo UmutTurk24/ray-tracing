@@ -22,5 +22,6 @@ public class HW3Controller
         Shape s = new Sphere(new Vector(0.0f, 10.0f, 50.0f), 20f);
         Shape s2 = new Sphere(new Vector(50.0f, 15.0f, 10.0f), 30f);
         Shape s3 = new Sphere(new Vector(-60f, 30f, -10.0f), 60f);
+        s2.DiffuseColor = new Vector(200f, 0f, 255f);
     }
 }

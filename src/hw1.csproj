@@ -19,13 +19,13 @@
     <Compile Include="Sphere.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Scene.cs" />
+    <!-- <Compile Include="HW2Controller.cs" /> -->
     <Compile Include="HW3Controller.cs" />
     <!-- <Compile Include="HW2sController.cs" />
     <Compile Include="TestCamera.cs" />
     <Compile Include="TestVector.cs" />
     <Compile Include="TestRay.cs" />
     <Compile Include="TestImage.cs" /> -->
-    <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="xunit" Version="2.5.0" />
     <PackageReference Include="xunit.runner.console" Version="2.5.0">
