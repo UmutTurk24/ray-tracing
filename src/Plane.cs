@@ -11,8 +11,6 @@ class Plane : Shape
 {
     private Vector _point;
     private Vector _normal;
-    private Vector _color;
-
 
     public Plane() 
     {
