@@ -112,9 +112,9 @@ public class Image
             
             solution.SetPixel(i,j, Color.FromArgb(
                 color.A,
-                (int) (Math.Pow(color.R/255.0, 1/gammaFactor) * 255),
-                (int) (Math.Pow(color.G/255.0, 1/gammaFactor) * 255),
-                (int) (Math.Pow(color.B/255.0, 1/gammaFactor) * 255)
+                (int) (Math.Pow(color.R/255.0, gammaFactor) * 255),
+                (int) (Math.Pow(color.G/255.0, gammaFactor) * 255),
+                (int) (Math.Pow(color.B/255.0, gammaFactor) * 255)
             ));
         }
 

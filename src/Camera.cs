@@ -301,10 +301,12 @@ public class Camera
         Vector color = new Vector(0,0,0);
         float minDistance = float.PositiveInfinity;
 
-
         foreach (Shape shape in scene)
         {
             float distance = shape.Hit(ray);
+
+            if (distance == -1f) continue;
+
             if (minDistance > distance) 
             {
                 color = shape.DiffuseColor;
@@ -314,8 +316,9 @@ public class Camera
             // return (distance1 < distance2) ? distance1 : distance2;
         }
 
-        Vector pixelColor = color * ((_far - minDistance)/_far);
+        if (float.PositiveInfinity == minDistance) return color;
 
+        Vector pixelColor = color * ((_far - minDistance)/_far);
         return pixelColor;
 
         // if (_projection == Projection.Perspective)

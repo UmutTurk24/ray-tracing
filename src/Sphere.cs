@@ -78,7 +78,6 @@ class Sphere : Shape
             float distance1 = Math.Abs(~(r.Origin - intersection1));
             float distance2 = Math.Abs(~(r.Origin - intersection2));
             
-
             return (distance1 < distance2) ? distance1 : distance2;
         }
 
