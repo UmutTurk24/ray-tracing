@@ -104,10 +104,21 @@ public class Image
             new(_width, _height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
         
         // Copy color data from the image array to the Bitmap with the Gamma Correction
-        for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
-            var color = _image[i,j];
+        // for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
+        //     var color = _image[i,j];
             
-            solution.SetPixel(j,i, Color.FromArgb(
+        //     solution.SetPixel(i,j, Color.FromArgb(
+        //         color.A,
+        //         (int) (Math.Pow(color.R/255f, _gamma) * 255),
+        //         (int) (Math.Pow(color.G/255f, _gamma) * 255),
+        //         (int) (Math.Pow(color.B/255f, _gamma) * 255)
+        //     ));
+        // }
+
+        for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
+            var color = _image[i, _height - 1 - j];
+            
+            solution.SetPixel(i,j, Color.FromArgb(
                 color.A,
                 (int) (Math.Pow(color.R/255f, _gamma) * 255),
                 (int) (Math.Pow(color.G/255f, _gamma) * 255),
