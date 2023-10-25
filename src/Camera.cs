@@ -265,6 +265,7 @@ public class Camera
 
                 Vector color = CreatePixelColor(ray, scene);
 
+
                 // Set the color of the pixel
                 image.Paint(i, j, color);
             }
@@ -304,7 +305,7 @@ public class Camera
         foreach (Shape shape in scene)
         {
             float distance = shape.Hit(ray);
-            if (distance > minDistance) 
+            if (minDistance > distance) 
             {
                 color = shape.DiffuseColor;
                 minDistance = distance;

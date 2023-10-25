@@ -75,7 +75,8 @@ public class Image
         /// <param name="color">The color to set the pixel to.</param>
         /// <param name="alpha">The alpha value of the pixel.</param>
         /// <returns>void</returns>
-        
+
+
         
         // Check if pixel is out of bounds
         if (i < 0 || i >= _width || j < 0 || j >= _height) return;
