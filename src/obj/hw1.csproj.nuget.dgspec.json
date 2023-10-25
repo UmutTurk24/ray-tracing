@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\umturk\\Documents\\GitHub\\ray-tracing\\src\\hw1.csproj": {}
+    "/Users/umut/Github/ray-tracing/src/hw1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\umturk\\Documents\\GitHub\\ray-tracing\\src\\hw1.csproj": {
+    "/Users/umut/Github/ray-tracing/src/hw1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\umturk\\Documents\\GitHub\\ray-tracing\\src\\hw1.csproj",
+        "projectUniqueName": "/Users/umut/Github/ray-tracing/src/hw1.csproj",
         "projectName": "hw1",
-        "projectPath": "C:\\Users\\umturk\\Documents\\GitHub\\ray-tracing\\src\\hw1.csproj",
-        "packagesPath": "C:\\Users\\umturk\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\umturk\\Documents\\GitHub\\ray-tracing\\src\\obj\\",
+        "projectPath": "/Users/umut/Github/ray-tracing/src/hw1.csproj",
+        "packagesPath": "/Users/umut/.nuget/packages/",
+        "outputPath": "/Users/umut/Github/ray-tracing/src/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\umturk\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/umut/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -69,7 +69,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.401/RuntimeIdentifierGraph.json"
         }
       }
     }
