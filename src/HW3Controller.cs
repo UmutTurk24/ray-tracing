@@ -26,10 +26,11 @@ public class HW3Controller
         s3.DiffuseColor = new Vector(0.0f, 255f, 0.0f);
 
         Shape p1 = new Plane();
-        scene.AddShape(ref s1);
-        scene.AddShape(ref s2);
-        scene.AddShape(ref s3);
+        p1.DiffuseColor = new Vector(50f, 10f, 10f);
+        // scene.AddShape(ref s1);
         scene.AddShape(ref p1);
+        scene.AddShape(ref s3);
+        scene.AddShape(ref s2);
 
         c.RenderImage("test.bmp", scene);
     }

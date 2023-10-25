@@ -40,14 +40,14 @@ class Plane : Shape
     public override float Hit(Ray r)
     {
         /// Plane Ray Intersection Formula
-        /// t = ((a - o) * n) / (n * l)
+        /// t = ((a - o) * n) / (n * d)
         /// t = distance from ray origin to intersection point
         /// n = normal to the plane
         /// a = point on the plane
         /// o = origin of the ray
-        /// l = direction of the ray
+        /// d = direction of the ray
 
-        if (Vector.Dot(_normal, r.Direction) == 0) return float.PositiveInfinity;
+        if (Vector.Dot(_normal, r.Direction) == 0) return -1f;
         return Vector.Dot(_point - r.Origin, _normal) / Vector.Dot(_normal, r.Direction);
     }
 

@@ -104,7 +104,8 @@ public class Image
             new(_width, _height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
 
         // Calculate the gamma correction factor
-        var gammaFactor = 1 / _gamma;
+        // var gammaFactor = 1 / _gamma;
+        var gammaFactor = _gamma;
         
         // Copy color data from the image array to the Bitmap with the Gamma Correction
         for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {

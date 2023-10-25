@@ -304,10 +304,9 @@ public class Camera
         foreach (Shape shape in scene)
         {
             float distance = shape.Hit(ray);
-
             if (distance == -1f) continue;
 
-            if (minDistance > distance) 
+            if (minDistance >= distance) 
             {
                 color = shape.DiffuseColor;
                 minDistance = distance;
@@ -320,22 +319,6 @@ public class Camera
 
         Vector pixelColor = color * ((_far - minDistance)/_far);
         return pixelColor;
-
-        // if (_projection == Projection.Perspective)
-        // {
-        //     // Define the custom color for perspective projection
-        //     Vector color = ((float)(1.0 - ray.Direction.Y) * colorWhite) + (ray.Direction.Y * colorBlue);
-        //     return color;
-        // }
-        // else if (_projection == Projection.Orthographic)
-        // {
-        //     // Define the custom color for orthographic projection
-        //     Vector normalizedOrigin = ray.Origin;
-        //     Vector.Normalize(ref normalizedOrigin);
-        //     Vector color = ((float)(1.0 - normalizedOrigin.X) * colorWhite) + (normalizedOrigin.X * colorBlue);
-        //     return color;
-        // }
-        // return new Vector (0,0,0);
     }
 
     private (float, float) SpaceToPixelMapping(int i, int j)
