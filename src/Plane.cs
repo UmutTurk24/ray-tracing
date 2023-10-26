@@ -39,6 +39,13 @@ class Plane : Shape
 
     public override float Hit(Ray r)
     {
+        /// <summary>
+        /// Determines if the plane has been hit by the ray input.
+        /// </summary>
+        /// <param name="r">The ray.</param>
+        /// <returns>The intersection distiance from the ray origin. Return infinity if
+        /// there is no intersection.</returns>
+
         /// Plane Ray Intersection Formula
         /// t = ((a - o) * n) / (n * d)
         /// t = distance from ray origin to intersection point
@@ -53,6 +60,12 @@ class Plane : Shape
 
     public override Vector Normal(Vector p)
     {
+        /// <summary>
+        /// Returns the normal of the plane.
+        /// </summary>
+        /// <param name="p">A point on the plane.</param>
+        /// <returns>The normal of the plane.</returns>
+
         return _normal;
     }
 

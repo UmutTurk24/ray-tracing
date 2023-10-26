@@ -34,8 +34,12 @@ public class Scene: IEnumerable<Shape> {
     }
 }
 
+
 public class ShapeEnum : IEnumerator
 {
+    /// <summary>
+    /// Enumerator for shapes
+    /// </summary>
     public List<Shape> _shapes; 
     int position = -1;
 
