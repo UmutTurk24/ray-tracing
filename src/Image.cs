@@ -106,12 +106,14 @@ public class Image
         // Set the pixel colors
         for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
             var color = _image[i, _height - 1 - j];
+
+            double correctedGamma = 1f/_gamma;
             
             solution.SetPixel(i,j, Color.FromArgb(
                 color.A,
-                (int) (Math.Pow(color.R/255f, _gamma) * 255),
-                (int) (Math.Pow(color.G/255f, _gamma) * 255),
-                (int) (Math.Pow(color.B/255f, _gamma) * 255)
+                (int) (Math.Pow(color.R/255f, correctedGamma) * 255),
+                (int) (Math.Pow(color.G/255f, correctedGamma) * 255),
+                (int) (Math.Pow(color.B/255f, correctedGamma) * 255)
             ));
         }
 

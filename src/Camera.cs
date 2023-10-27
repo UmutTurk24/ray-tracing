@@ -276,6 +276,12 @@ public class Camera
 
     private Ray ConstructRay(float u, float v)
     {
+        /// <summary>
+        /// Constructs the ray given the u, v points
+        /// </summary>
+        /// <param name="u">The u coordinate of the pixel in space.</param>
+        /// <param name="v">The v coordinate of the pixel in space.</param>
+        /// <returns>The Ray with the corresponding projection</returns>
         if (_projection == Projection.Perspective)
         {
             // Calculate the direction of the ray for perspective projection
@@ -298,6 +304,12 @@ public class Camera
 
     private Vector CreatePixelColor(Ray ray, Scene scene)
     {
+        /// <summary>
+        /// Creates a color for the given pixel
+        /// </summary>
+        /// <param name="ray">Ray being casted at the scene</param>
+        /// <param name="scene">Scene we are constructing</param>
+        /// <returns>The pixel color</returns>
         Vector color = new Vector(0,0,0);
         float minDistance = float.PositiveInfinity;
 
@@ -311,8 +323,6 @@ public class Camera
                 color = shape.DiffuseColor;
                 minDistance = distance;
             }
-            // minDistance =  minDistance > distance ? distance : minDistance;
-            // return (distance1 < distance2) ? distance1 : distance2;
         }
 
         if (float.PositiveInfinity == minDistance) return color;
