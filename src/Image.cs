@@ -1,4 +1,9 @@
 using System.Drawing;
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+
 /// <summary>
 /// Represents an image with color data and provides methods to manipulate and save it.
 /// </summary>
@@ -104,20 +109,40 @@ public class Image
             new(_width, _height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
         
         // Set the pixel colors
-        for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
-            var color = _image[i, _height - 1 - j];
+        // for (int i = 0; i < _width; i++) for (int j = 0; j < _height; j++) {
+        //     var color = _image[i, _height - 1 - j];
 
-            double correctedGamma = 1f/_gamma;
+        //     double correctedGamma = 1f/_gamma;
             
-            solution.SetPixel(i,j, Color.FromArgb(
-                color.A,
-                (int) (Math.Pow(color.R/255f, correctedGamma) * 255),
-                (int) (Math.Pow(color.G/255f, correctedGamma) * 255),
-                (int) (Math.Pow(color.B/255f, correctedGamma) * 255)
-            ));
-        }
+        //     solution.SetPixel(i,j, Color.FromArgb(
+        //         color.A,
+        //         (int) (Math.Pow(color.R/255f, correctedGamma) * 255),
+        //         (int) (Math.Pow(color.G/255f, correctedGamma) * 255),
+        //         (int) (Math.Pow(color.B/255f, correctedGamma) * 255)
+        //     ));
+        // }
+
+        // Set the pixel colors
+        Parallel.For(0, _width, i =>
+        {
+            for (int j = 0; j < _height; j++)
+            {
+                var color = _image[i, _height - 1 - j];
+
+                double correctedGamma = 1f / _gamma;
+
+                solution.SetPixel(i, j, Color.FromArgb(
+                    color.A,
+                    (int)(Math.Pow(color.R / 255f, correctedGamma) * 255),
+                    (int)(Math.Pow(color.G / 255f, correctedGamma) * 255),
+                    (int)(Math.Pow(color.B / 255f, correctedGamma) * 255)
+                ));
+            }
+        });
 
         solution.Save(fileName);
+
+        
     }
 
     // Override ToString method to provide a string representation of the image, for testing

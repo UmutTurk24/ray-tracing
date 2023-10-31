@@ -1,13 +1,10 @@
 using System.Net.Mail;
 
-
-/// <summary>
-/// Represents a three-dimensional vector and provides vector operations.
-/// </summary>
-/// Class <c>Computer Graphics</c>
-/// Author: Umut Turk
-/// Date: 18 September 2023
-public class Vector
+/// 
+/// Possible improvements to the Vector class
+/// Use struct
+/// Make the class immutable
+public struct Vector
 {
     // Private fields for vector components
     private float _x;
