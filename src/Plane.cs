@@ -54,7 +54,7 @@ class Plane : Shape
         /// o = origin of the ray
         /// d = direction of the ray
 
-        if (Vector.Dot(_normal, r.Direction) == 0) return -1f;
+        if (Vector.Dot(_normal, r.Direction) == 0) return float.PositiveInfinity;
         return Vector.Dot(_point - r.Origin, _normal) / Vector.Dot(_normal, r.Direction);
     }
 

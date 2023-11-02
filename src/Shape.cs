@@ -1,6 +1,6 @@
 public abstract class Shape
 {    
-    private Vector _color = new Vector(50f,0f,0f);
+    private Vector _color = new Vector(0f,0f,255f);
 
     public Vector DiffuseColor
     {

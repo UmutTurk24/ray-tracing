@@ -4,8 +4,11 @@
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
 /// Date: 28 September 2023
-/// Time spent: ~3 hours
-
+/// Time spent: ~5 hours
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using System.Threading;
 public class HW3Controller
 {
     public static void Main()
@@ -15,11 +18,10 @@ public class HW3Controller
         new Vector(0.0f, 0.0f, 85.0f), // Eye
         new Vector(0.0f, 0f, 0f), // Lookat
         new Vector(0.0f, 1f, 0f), // Up
-        0.1f, 150f, 512, 512, -10f, 10f, -10f, 10f);
+        0.1f, 150f, 1512, 1512, -10f, 10f, -10f, 10f);
 
         //Build the scene
         Scene scene = new Scene();
-
 
         Shape t1 = new Sphere(new Vector(-80f, 100f, 46f), 20f);
         Shape t2 = new Sphere(new Vector(-60f, 100f, 48f), 20f);
@@ -111,8 +113,41 @@ public class HW3Controller
         scene.AddShape(ref mid);
         scene.AddShape(ref p1);
 
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
+        // c.RenderImage("test.bmp", scene);
+        stopWatch.Stop();
+        TimeSpan ts = stopWatch.Elapsed;
+        // Format and display the TimeSpan value.
+        string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+        Console.WriteLine("RunTime " + elapsedTime);
 
+        // Recorded Times...
+        /// Original Vector Class: RunTime 00:00:05.97
+        /// Vector Class Variables made public, no get setter or private field
+        /// RunTime 00:00:03.68
 
-        c.RenderImage("test.bmp", scene);
+        Vector3 testVec = new Vector3();
+
+        Camera c2 = new Camera(Camera.Projection.Perspective,
+        new Vector(0.0f, 20.0f, 100.0f),
+        new Vector(0.0f, 0f, 0f),
+        new Vector(0.0f, 1f, 0f),
+        0.1f, 150f, 512, 512, -10f, 10f, -10f, 10f);
+        //Build the scene
+        Scene scene2 = new Scene();
+        Shape s = new Sphere(new Vector(0.0f, 10.0f, 50.0f), 20f);
+        Shape s2 = new Sphere(new Vector(50.0f, 15.0f, 10.0f), 30f);
+        Shape s3 = new Sphere(new Vector(-60f, 30f, -10.0f), 60f);
+        s3.DiffuseColor = new Vector(0.0f, 255f, 0.0f);
+        s2.DiffuseColor = new Vector(200f, 0.0f, 255f);
+        Shape p2 = new Plane();
+        scene2.AddShape(ref p2);
+        scene2.AddShape(ref s3);
+        scene2.AddShape(ref s2);
+        scene2.AddShape(ref s);
+        c2.RenderImage("test4.bmp", scene2);
     }
 }

@@ -316,9 +316,9 @@ public class Camera
         foreach (Shape shape in scene)
         {
             float distance = shape.Hit(ray);
-            if (distance == -1f) continue;
+            if (distance == float.PositiveInfinity) continue;
 
-            if (minDistance >= distance) 
+            if (minDistance > distance && distance > 0) 
             {
                 color = shape.DiffuseColor;
                 minDistance = distance;

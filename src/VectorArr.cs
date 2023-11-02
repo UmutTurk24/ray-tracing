@@ -1,5 +1,6 @@
 using System.Net.Mail;
 
+/// 
 /// Possible improvements to the Vector class
 /// Use struct
 /// Make the class immutable
@@ -8,11 +9,9 @@ public class Vector
 
 
     // Properties to access vector components
-    public float X;
-
-    public float Y;
-
-    public float Z;
+    
+    // Properties to access vector components
+    private float[] vec = new float[3];
 
     public Vector()
     {
@@ -21,9 +20,9 @@ public class Vector
         /// </summary>
         /// <returns>A vector with components (0, 0, 0).</returns>
 
-        X = 0;
-        Y = 0;
-        Z = 0;
+        vec[0] = 0;
+        vec[1] = 0;
+        vec[2] = 0;
     }
 
     public Vector(float x, float y, float z)
@@ -36,9 +35,27 @@ public class Vector
         /// <param name="z">The z component.</param>
         /// <returns>A vector with the specified components.</returns>
 
-        X = x;
-        Y = y;
-        Z = z;
+        vec[0] = x;
+        vec[1] = y;
+        vec[2] = z;
+    }
+
+    public float X
+    {
+        get { return vec[0]; }
+        set { vec[0] = value; }
+    }
+
+    public float Y
+    {
+        get { return vec[1]; }
+        set { vec[1] = value; }
+    }
+
+    public float Z
+    {
+        get { return vec[2]; }
+        set { vec[2] = value; }
     }
 
     // Static methods for vector operations

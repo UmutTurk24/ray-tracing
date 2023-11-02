@@ -65,7 +65,7 @@ class Sphere : Shape
 
         if (discriminant < 0)
         {
-            return -1.0f;
+            return float.PositiveInfinity;
         }
         else
         {
