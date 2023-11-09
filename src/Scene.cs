@@ -14,7 +14,7 @@ public class Scene: IEnumerable<Shape> {
     public Vector Light;
     public Scene() {
         _shapes = new List<Shape>();
-        Light = new Vector(0f, 0f, 0f);
+        Light = new Vector(0f, 100f, 50f);
     }
 
     public void AddShape(ref Shape s) {

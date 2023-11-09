@@ -258,7 +258,7 @@ public class Camera
 
                 Ray ray = ConstructRay(u,v);
 
-                Vector color = CreatePixelColor(ray, scene, i, j);
+                Vector color = CreatePixelColor(ray, scene);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -286,7 +286,7 @@ public class Camera
 
                 Ray ray = ConstructRay(u,v);
 
-                Vector color = CreatePixelColor(ray, scene, i, j);
+                Vector color = CreatePixelColor(ray, scene);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -324,7 +324,7 @@ public class Camera
         );
     }
 
-    private Vector CreatePixelColor(Ray ray, Scene scene, int i, int j)
+    private Vector CreatePixelColor(Ray ray, Scene scene)
     {
         Vector shapeColor = new Vector(0,0,0);
         float minDistance = float.PositiveInfinity;
@@ -359,9 +359,10 @@ public class Camera
         Ray shadowRay = new Ray(intersection, scene.Light - intersection);
         foreach (Shape shadowShape in scene)
         {
+            if (closestShape == shadowShape) continue;
             float shadowDistance = shadowShape.Hit(shadowRay);
             if (shadowDistance < float.PositiveInfinity && shadowDistance > 0) {
-                return new Vector(10,10,10); // Shadow
+                return new Vector(30,30,30); // Shadow
             };
         }
 
@@ -373,6 +374,9 @@ public class Camera
         Vector bisector = (-ray.Direction) + lightDirection;
         Vector.Normalize(ref bisector);
 
+        // Console.WriteLine("intersection: {0} || light direction: {1}", intersection, lightDirection); 
+        // Console.WriteLine("dot: {0}", Vector.Dot(lightDirection, closestShape.Normal(intersection))); 
+
         // Calculate the Illumination from the source
         // If the object far from the light, then the illumination is lowered
         // Vector lightDistance = scene.Light - intersection;
@@ -380,19 +384,20 @@ public class Camera
         float I = 1f;   
 
         // Calculate the color of the shape
-        Vector ambientColor = closestShape.A;
-        Vector diffuseColor = closestShape.D * I * Math.Max(0, Vector.Dot(lightDirection, closestShape.Normal(intersection)));
-        Vector specularColor = closestShape.S * I * Math.Max(0, (float)Math.Pow(Vector.Dot(bisector, closestShape.Normal(intersection)), closestShape.Shiny));
-        Console.WriteLine("ambient: {0}", ambientColor);
-        Console.WriteLine("diffuse: {0}", diffuseColor);
-        Console.WriteLine("specular: {0}", specularColor);
+        // Vector ambientColor = closestShape.A;
+        // Vector diffuseColor = closestShape.D * I * Math.Max(0, Vector.Dot(lightDirection, closestShape.Normal(intersection)));
+        // Vector specularColor = closestShape.S * I * Math.Max(0, (float)Math.Pow(Vector.Dot(bisector, closestShape.Normal(intersection)), closestShape.Shiny));
+        // Console.WriteLine("ambient: {0}", ambientColor);
+        // Console.WriteLine("diffuse: {0}", diffuseColor);
+        // Console.WriteLine("specular: {0}", specularColor);
+        // Console.WriteLine("specular: {0}", Math.Pow(Vector.Dot(bisector, closestShape.Normal(intersection)), closestShape.Shiny));
         
 
         shapeColor = closestShape.A + // Ambient Color
                      closestShape.D * I * Math.Max(0, Vector.Dot(lightDirection, closestShape.Normal(intersection))) + // Diffuse Color
                      closestShape.S * I * Math.Max(0, (float)Math.Pow(Vector.Dot(bisector, closestShape.Normal(intersection)), closestShape.Shiny)); // Specular Color
         
-
+        // Console.WriteLine("shapeColor: {0}", shapeColor);
         // Vector pixelColor = color * ((_far - minDistance)/_far);
         return shapeColor;
 
