@@ -2,7 +2,7 @@ public abstract class Shape
 {    
     private Vector _specular = new Vector(255f,255f,255f);
     private Vector _ambient = new Vector(10f,10f,10f); // Dark Gray
-    private Vector _diffuse = new Vector(50f, 0f, 0f); // Default to red
+    private Vector _diffuse = new Vector(50f, 50f, 50f); // Default to red
     private float _shininess = 100f;
 
     public Vector S {
