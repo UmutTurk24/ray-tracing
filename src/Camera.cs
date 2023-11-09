@@ -122,6 +122,8 @@ public class Camera
         get => _w;
         set => _w = value;
     }
+
+    private float[,] _depthBuffer;
     public Camera()
     {
         /// <summary>
@@ -146,6 +148,9 @@ public class Camera
 
         // Calculate the u,v,w vectors
         CalculateCameraVectors();
+
+        // Define the depth buffer - set all values to infinity
+        SetupDepthBuffer();
     }
 
 
@@ -185,6 +190,9 @@ public class Camera
 
         // Calculate the u,v,w vectors
         CalculateCameraVectors();
+
+        // Setup the Depth Buffer
+        SetupDepthBuffer();
     }
 
     private void CalculateCameraVectors() {
@@ -194,6 +202,21 @@ public class Camera
         Vector.Normalize(ref _u);
         _v = Vector.Cross(_w, _u);
         Vector.Normalize(ref _v);
+    }
+
+    private void SetupDepthBuffer() {
+        /// <summary>
+        /// Sets up the depth buffer for the camera.
+        /// </summary>
+        /// <returns>void</returns>
+        _depthBuffer = new float[_width, _height];
+        for (int i = 0; i < _width; i++) 
+        {
+            for (int j = 0; j < _height; j++) 
+            {
+                _depthBuffer[i,j] = float.PositiveInfinity;
+            }
+        }
     }
 
     public void RenderImage(String fileName, Scene scene) {
@@ -235,7 +258,7 @@ public class Camera
 
                 Ray ray = ConstructRay(u,v);
 
-                Vector color = CreatePixelColor(ray, scene);
+                Vector color = CreatePixelColor(ray, scene, i, j);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -263,8 +286,7 @@ public class Camera
 
                 Ray ray = ConstructRay(u,v);
 
-                Vector color = CreatePixelColor(ray, scene);
-
+                Vector color = CreatePixelColor(ray, scene, i, j);
 
                 // Set the color of the pixel
                 image.Paint(i, j, color);
@@ -302,33 +324,69 @@ public class Camera
         );
     }
 
-    private Vector CreatePixelColor(Ray ray, Scene scene)
+    private Vector CreatePixelColor(Ray ray, Scene scene, int i, int j)
     {
-        /// <summary>
-        /// Creates a color for the given pixel
-        /// </summary>
-        /// <param name="ray">Ray being casted at the scene</param>
-        /// <param name="scene">Scene we are constructing</param>
-        /// <returns>The pixel color</returns>
-        Vector color = new Vector(0,0,0);
+        Vector shapeColor = new Vector(0,0,0);
         float minDistance = float.PositiveInfinity;
+        Shape closestShape = null;
 
         foreach (Shape shape in scene)
         {
             float distance = shape.Hit(ray);
+
+            // The shape is not hit by the ray
             if (distance == float.PositiveInfinity) continue;
 
             if (minDistance > distance && distance > 0) 
             {
-                color = shape.DiffuseColor;
+                closestShape = shape;
                 minDistance = distance;
             }
         }
 
-        if (float.PositiveInfinity == minDistance) return color;
+        // No shape was hit by the ray
+        if (float.PositiveInfinity == minDistance || closestShape == null) return shapeColor;
 
-        Vector pixelColor = color * ((_far - minDistance)/_far);
-        return pixelColor;
+        // Calculate the light color of the pixel
+        // lightColor = ambientColor +
+        // diffuseColor  * (lightDirection · normal) +
+        // specularColor * (bisector · normal) ^ shininess  
+
+        // Calculate the point of intersection
+        Vector intersection = ray.Origin + ray.Direction * minDistance;
+
+        // Check if the intersection is in shadow
+        Ray shadowRay = new Ray(intersection, scene.Light - intersection);
+        foreach (Shape shadowShape in scene)
+        {
+            float shadowDistance = shadowShape.Hit(shadowRay);
+            if (shadowDistance < float.PositiveInfinity && shadowDistance > 0) {
+                return new Vector(10,10,10); // Shadow
+            };
+        }
+
+        // Calculate the light direction
+        Vector lightDirection = scene.Light - intersection;
+        Vector.Normalize(ref lightDirection);
+
+        // Calculate the bisector h=bisector(v,l) = Normalized(v + l)
+        Vector bisector = ray.Direction + lightDirection;
+        Vector.Normalize(ref bisector);
+
+        // Calculate the Illumination from the source
+        // If the object far from the light, then the illumination is lowered
+        // Vector lightDistance = scene.Light - intersection;
+        // float I = (new Vector(1f,1f,1f)) * (~lightDistance);
+        float I = 1f;
+
+        // Calculate the color of the shape
+        shapeColor = closestShape.A + // Ambient Color
+                     closestShape.D * I * Math.Max(0, Vector.Dot(lightDirection, closestShape.Normal(intersection))) + // Diffuse Color
+                     closestShape.S * I * Math.Max(0, (float)Math.Pow(Vector.Dot(bisector, closestShape.Normal(intersection)), closestShape.Shiny)); // Specular Color
+
+        // Vector pixelColor = color * ((_far - minDistance)/_far);
+        return shapeColor;
+
     }
 
     private (float, float) SpaceToPixelMapping(int i, int j)

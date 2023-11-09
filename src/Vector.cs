@@ -6,7 +6,6 @@ using System.Net.Mail;
 public class Vector
 {
 
-
     // Properties to access vector components
     public float X;
 

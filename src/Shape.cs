@@ -1,14 +1,37 @@
 public abstract class Shape
 {    
-    private Vector _color = new Vector(0f,0f,255f);
+    private Vector _specular = new Vector(255f,255f,255f);
+    private Vector _ambient = new Vector(10f,10f,10f); // Dark Gray
+    private Vector _diffuse = new Vector(50f, 0f, 0f); // Default to red
+    private float _shininess = 100f;
 
-    public Vector DiffuseColor
-    {
-        get => _color;
-        set => _color = value;
+    public Vector S {
+        get => _specular;
+        set => _specular = value;
     }
 
-    ///<summary> Determins if the shape object has been hit by the ray input.</summary>
+    public Vector A {
+        get => _ambient;
+        set => _ambient = value;
+    }
+
+    public Vector D {
+        get => _diffuse;
+        set => _diffuse = value;
+    }
+
+    public float Shiny
+    {
+        get => _shininess;
+        set
+        {
+            if (value <= 0f || value >= 128f)
+                throw new ArgumentOutOfRangeException(nameof(Shiny), "Shininess must be between 0f and 128f.");
+            _shininess = value;
+        }
+    }
+
+    ///<summary> Determines if the shape object has been hit by the ray input.</summary>
     /// <param name="r">The ray.</param>
     /// <return> The intersection distiance from the ray origin. Return infinity if
     /// there is no intersection.  </return>

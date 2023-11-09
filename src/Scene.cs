@@ -11,8 +11,10 @@ using System.Transactions;
 /// Date: 24 October 2023
 public class Scene: IEnumerable<Shape> {
     private List<Shape> _shapes;
+    public Vector Light;
     public Scene() {
         _shapes = new List<Shape>();
+        Light = new Vector(0f, 0f, 0f);
     }
 
     public void AddShape(ref Shape s) {
