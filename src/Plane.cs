@@ -7,7 +7,7 @@
 /// Date: 24 October 2023
 
 
-class Plane : Shape
+public class Plane : Shape
 {
     private Vector _point;
     private Vector _normal;

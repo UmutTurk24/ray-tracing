@@ -6,7 +6,7 @@
 /// Author: Umut Turk
 /// Date: 24 October 2023
 
-class Sphere : Shape
+public class Sphere : Shape
 {
     private float _radius;
 
