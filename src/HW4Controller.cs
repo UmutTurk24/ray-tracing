@@ -12,7 +12,7 @@ public class HW4Controller
     {
        
 
-        Camera c2 = new Camera(Camera.Projection.Perspective,
+        Camera c2 = new Camera(Camera.Projection.Orthographic,
         new Vector(0.0f, 20.0f, 80.0f),
         new Vector(0.0f, 0f, 0f),
         new Vector(0.0f, 1f, 0f),
@@ -30,18 +30,18 @@ public class HW4Controller
 
         Shape p2 = new Plane();
         scene2.AddShape(ref p2);
-        scene2.AddShape(ref s3);
+        // scene2.AddShape(ref s3);
         scene2.AddShape(ref s2);
         scene2.AddShape(ref s1);
-        c2.RenderImage("SphereArray.bmp", scene2);
+        // c2.RenderImage("SphereArray.bmp", scene2);
         
 
         // Orthographic Test
         Camera c1 = new Camera(Camera.Projection.Orthographic,
-        new Vector(0.0f, 20.0f, 80.0f),
+        new Vector(0.0f, 100.0f, 150.0f),
         new Vector(0.0f, 0f, 0f),
         new Vector(0.0f, 1f, 0f),
-        0.1f, 150f, 512, 512, -10f, 10f, -10f, 10f);
+        0.1f, 150f, 512, 512, -100f, 100f, -100f, 100f);
         Scene scene3 = new Scene();
         Shape s4 = new Sphere(new Vector(0.0f, 20.0f, 20.0f), 20f);
         scene3.AddShape(ref s4);
