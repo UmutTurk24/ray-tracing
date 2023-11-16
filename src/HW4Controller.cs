@@ -34,7 +34,7 @@ public class HW4Controller
         scene2.AddShape(ref s3);
         scene2.AddShape(ref s2);
         scene2.AddShape(ref s1);
-        c2.RenderImage("SphereArray.bmp", scene2);
+        c2.RenderImage("SphereScene.bmp", scene2);
         
 
         // Orthographic Test

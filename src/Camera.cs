@@ -226,28 +226,6 @@ public class Camera
         /// </summary>
         /// <param name="fileName">The name of the file to save the image to.</param>
         /// <returns>void</returns>
-        Image image;
-        
-        if (_projection == Projection.Orthographic) 
-        {
-            image = OrthographicRender(scene);
-        } else if (_projection == Projection.Perspective) 
-        {
-            image = PerspectiveRender(scene);
-        } else {
-            return;
-        }
-
-        image.SaveImage(fileName);
-    }
-
-    private Image OrthographicRender(Scene scene) {
-        /// <summary>
-        /// Renders the image using orthographic projection.
-        /// </summary>
-        /// <returns>The rendered image.</returns>
-
-        // Set up the image to be saved
         Image image = new Image(_width, _height);
 
         for (int i = 0; i < _width; i++)
@@ -276,47 +254,10 @@ public class Camera
                 
             }
         }
-        return image;
+
+        image.SaveImage(fileName);
     }
 
-    private Image PerspectiveRender(Scene scene)
-    {
-        /// <summary>
-        /// Renders the image using perspective projection.
-        /// </summary>
-        /// <returns>The rendered image.</returns>
-
-        // Set up the image to be saved
-        Image image = new Image(_width, _height);
-
-        for (int i = 0; i < _width; i++)
-        {
-            for (int j = 0; j < _height; j++)
-            {
-                // Translate the pixel coordinates to the space coordinates
-                (float u, float v) = SpaceToPixelMapping(i,j);
-
-                Ray ray = ConstructRay(u,v);
-
-                foreach (Shape shape in scene) 
-                {
-                    float distance = shape.Hit(ray);
-
-                    // Check if the distance is less than the current distance in the depth buffer
-                    if (_depthBuffer[i,j] > distance && distance > 0) 
-                    {
-                        _depthBuffer[i,j] = distance;
-                        Vector color = CreatePixelColor(ray, scene, shape, distance);
-
-                        // Set the color of the pixel
-                        image.Paint(i, j, color);
-                    }
-                }
-            }
-        }
-
-        return image;
-    }
 
     private Ray ConstructRay(float u, float v)
     {
