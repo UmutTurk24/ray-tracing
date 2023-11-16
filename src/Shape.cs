@@ -7,6 +7,8 @@
 
 public abstract class Shape
 {    
+
+    // Define the material components
     private Vector _specular = new Vector(255f,255f,255f);
     private Vector _ambient = new Vector(30f,30f,30f); // Dark Gray
     private Vector _diffuse = new Vector(0f, 200f, 200f); // Default to cyan

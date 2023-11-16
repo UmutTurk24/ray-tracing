@@ -1,22 +1,23 @@
+
 /// <summary>
-/// Controller for Hw3
+/// Controller for Hw4
 /// </summary>
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
 /// Date: 15 November 2023
 /// Time spent: ~5 hours
-
 public class HW4Controller
 {
     public static void Main()
     {
        
-
-        Camera c2 = new Camera(Camera.Projection.Orthographic,
+        // Perspective Test
+        Camera c2 = new Camera(Camera.Projection.Perspective,
         new Vector(0.0f, 20.0f, 80.0f),
         new Vector(0.0f, 0f, 0f),
         new Vector(0.0f, 1f, 0f),
         0.1f, 150f, 512, 512, -10f, 10f, -10f, 10f);
+
         //Build the scene
         Scene scene2 = new Scene();
         scene2.Light = new Vector(-30.0f,100.0f, 80.0f);
@@ -30,10 +31,10 @@ public class HW4Controller
 
         Shape p2 = new Plane();
         scene2.AddShape(ref p2);
-        // scene2.AddShape(ref s3);
+        scene2.AddShape(ref s3);
         scene2.AddShape(ref s2);
         scene2.AddShape(ref s1);
-        // c2.RenderImage("SphereArray.bmp", scene2);
+        c2.RenderImage("SphereArray.bmp", scene2);
         
 
         // Orthographic Test
@@ -41,11 +42,20 @@ public class HW4Controller
         new Vector(0.0f, 100.0f, 150.0f),
         new Vector(0.0f, 0f, 0f),
         new Vector(0.0f, 1f, 0f),
-        0.1f, 150f, 512, 512, -100f, 100f, -100f, 100f);
+        0.1f, 150f, 512, 512, -200f, 200f, -200f, 200f);
         Scene scene3 = new Scene();
-        Shape s4 = new Sphere(new Vector(0.0f, 20.0f, 20.0f), 20f);
-        scene3.AddShape(ref s4);
-        scene3.Light = new Vector(-30.0f,100.0f, 80.0f);
+        Random rnd = new Random();
+        for (int i = 0; i < 10; i ++) {
+            for (int j = 0; j < 10; j++) {
+                Shape sph = new Sphere(new Vector(-150.0f + (i * 40), -180.0f + (j * 40), 20.0f), 10f);
+                Vector color = new Vector(rnd.Next(255), rnd.Next(255), rnd.Next(255));
+                sph.D = color;
+                scene3.AddShape(ref sph);
+            }
+
+        }
+        
+        scene3.Light = new Vector(-30.0f,180.0f, 250.0f);
         c1.RenderImage("test.bmp", scene3);
 
 
