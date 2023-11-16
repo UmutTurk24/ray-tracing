@@ -1,5 +1,3 @@
-using System.Drawing;
-using System.Security.Authentication.ExtendedProtection;
 /// <summary>
 /// A camera is a device that captures images. It has a position, orientation, and
 /// projection type (e.g., orthographic, perspective).
@@ -245,10 +243,13 @@ public class Camera
                     if (_depthBuffer[i, j] > distance && distance > 0)
                     {
                         _depthBuffer[i, j] = distance;
-                        Vector color = CreatePixelColor(ray, scene, shape, distance);
+                        if (distance < _far && distance > _near) {
+                            Vector color = CreatePixelColor(ray, scene, shape, distance);
 
-                        // Set the color of the pixel
-                        image.Paint(i, j, color);
+                            // Set the color of the pixel
+                            image.Paint(i, j, color);
+                        }
+                        
                     }
                 }
                 

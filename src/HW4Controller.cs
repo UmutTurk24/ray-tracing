@@ -42,7 +42,7 @@ public class HW4Controller
         new Vector(0.0f, 100.0f, 150.0f),
         new Vector(0.0f, 0f, 0f),
         new Vector(0.0f, 1f, 0f),
-        0.1f, 150f, 512, 512, -200f, 200f, -200f, 200f);
+        0.1f, 350f, 512, 512, -200f, 200f, -200f, 200f);
         Scene scene3 = new Scene();
         Random rnd = new Random();
         for (int i = 0; i < 10; i ++) {
