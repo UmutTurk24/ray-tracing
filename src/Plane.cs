@@ -4,7 +4,7 @@
 /// </summary>
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
-/// Date: 24 October 2023
+/// Date: 16 November 2023
 
 
 public class Plane : Shape

@@ -1,11 +1,12 @@
 using System.Drawing;
 using System.Security.Authentication.ExtendedProtection;
 /// <summary>
-/// A camera is a device that captures images. It has a position, a viewing direction, and an up vector.
+/// A camera is a device that captures images. It has a position, orientation, and
+/// projection type (e.g., orthographic, perspective).
 /// </summary>
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
-/// Date: 20 October 2023
+/// Date: 16 November 2023
 public class Camera
 {
 
@@ -258,10 +259,21 @@ public class Camera
 
                 Ray ray = ConstructRay(u,v);
 
-                Vector color = CreatePixelColor(ray, scene);
+                foreach (Shape shape in scene)
+                {
+                    float distance = shape.Hit(ray);
 
-                // Set the color of the pixel
-                image.Paint(i, j, color);
+                    // Check if the distance is less than the current distance in the depth buffer
+                    if (_depthBuffer[i, j] > distance && distance > 0)
+                    {
+                        _depthBuffer[i, j] = distance;
+                        Vector color = CreatePixelColor(ray, scene, shape, distance);
+
+                        // Set the color of the pixel
+                        image.Paint(i, j, color);
+                    }
+                }
+                
             }
         }
         return image;
@@ -286,10 +298,20 @@ public class Camera
 
                 Ray ray = ConstructRay(u,v);
 
-                Vector color = CreatePixelColor(ray, scene);
+                foreach (Shape shape in scene) 
+                {
+                    float distance = shape.Hit(ray);
 
-                // Set the color of the pixel
-                image.Paint(i, j, color);
+                    // Check if the distance is less than the current distance in the depth buffer
+                    if (_depthBuffer[i,j] > distance && distance > 0) 
+                    {
+                        _depthBuffer[i,j] = distance;
+                        Vector color = CreatePixelColor(ray, scene, shape, distance);
+
+                        // Set the color of the pixel
+                        image.Paint(i, j, color);
+                    }
+                }
             }
         }
 
@@ -324,28 +346,16 @@ public class Camera
         );
     }
 
-    private Vector CreatePixelColor(Ray ray, Scene scene)
+    private Vector CreatePixelColor(Ray ray, Scene scene, Shape shape, float distance)
     {
-        Vector shapeColor = new Vector(0,0,0);
-        float minDistance = float.PositiveInfinity;
-        Shape closestShape = null;
-
-        foreach (Shape shape in scene)
-        {
-            float distance = shape.Hit(ray);
-
-            // The shape is not hit by the ray
-            if (distance == float.PositiveInfinity) continue;
-
-            if (minDistance > distance && distance > 0) 
-            {
-                closestShape = shape;
-                minDistance = distance;
-            }
-        }
-
-        // No shape was hit by the ray
-        if (float.PositiveInfinity == minDistance || closestShape == null) return shapeColor;
+        /// <summary>
+        /// Creates the color of the pixel.
+        /// </summary>
+        /// <param name="ray">The ray.</param>
+        /// <param name="scene">The scene.</param>
+        /// <param name="shape">The shape.</param>
+        /// <param name="distance">The distance.</param>
+        /// <returns>The color of the pixel.</returns>
 
         // Calculate the light color of the pixel
         // lightColor = ambientColor +
@@ -353,13 +363,13 @@ public class Camera
         // specularColor * (bisector · normal) ^ shininess  
 
         // Calculate the point of intersection
-        Vector intersection = ray.Origin + ray.Direction * minDistance;
+        Vector intersection = ray.Origin + ray.Direction * distance;
 
         // Check if the intersection is in shadow
         Ray shadowRay = new Ray(intersection, scene.Light - intersection);
         foreach (Shape shadowShape in scene)
         {
-            if (closestShape == shadowShape) continue;
+            if (shape == shadowShape) continue;
             float shadowDistance = shadowShape.Hit(shadowRay);
             if (shadowDistance < float.PositiveInfinity && shadowDistance > 0) {
                 return new Vector(30,30,30); // Shadow
@@ -375,19 +385,17 @@ public class Camera
         Vector.Normalize(ref bisector);
 
         // Calculate the Illumination from the source
-        // If the object far from the light, then the illumination is lowered
-        // Vector lightDistance = scene.Light - intersection;
-        // float I = (new Vector(1f,1f,1f)) * (~lightDistance);
         float I = 1f;   // For simplicty, let's call it 1.
 
         // Calculate the colour of the shape
-        shapeColor = closestShape.A + // Ambient Color
-                     closestShape.D * I * Math.Max(0, Vector.Dot(lightDirection, closestShape.Normal(intersection))) + // Diffuse Color
-                     closestShape.S * I * Math.Max(0, (float)Math.Pow(Vector.Dot(bisector, closestShape.Normal(intersection)), closestShape.Shiny)); // Specular Color
+        Vector shapeColor = shape.A + // Ambient Color
+                            shape.D * I * Math.Max(0, Vector.Dot(lightDirection, shape.Normal(intersection))) + // Diffuse Color
+                            shape.S * I * Math.Max(0, (float)Math.Pow(Vector.Dot(bisector, shape.Normal(intersection)), shape.Shiny)); // Specular Color
         
         return shapeColor;
 
     }
+
 
     private (float, float) SpaceToPixelMapping(int i, int j)
     {

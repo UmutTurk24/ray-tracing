@@ -1,3 +1,10 @@
+/// <summary>
+/// A shape is an object that can be hit by a ray.
+/// </summary>
+/// Class <c>Computer Graphics</c>
+/// Author: Umut Turk
+/// Date: 16 November 2023
+
 public abstract class Shape
 {    
     private Vector _specular = new Vector(255f,255f,255f);
