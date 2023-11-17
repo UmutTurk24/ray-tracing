@@ -123,9 +123,8 @@ public class Camera
     }
 
     private float[,] _depthBuffer;
-    private Vector[,] _colorBuffer;
     private int _samplesPerPixel = 10; // Count of random samples for each pixel
-    private int _antialiasingSquareWidth = 5; // Width of the square for antialiasing 
+    private float _antialiasingSquareWidth = 0.5f; // Width of the square for antialiasing
     public Camera()
     {
         /// <summary>
@@ -229,6 +228,8 @@ public class Camera
         /// <returns>void</returns>
         Image image = new Image(_width, _height);
 
+        Random random = new Random();
+
         for (int i = 0; i < _width; i++)
         {
             for (int j = 0; j < _height; j++)
@@ -236,75 +237,45 @@ public class Camera
                 // Translate the pixel coordinates to the space coordinates
                 (float u, float v) = SpaceToPixelMapping(i,j);
 
-                Ray ray = ConstructRay(u,v);
+                Vector accumulatedColor = new Vector(0,0,0);
 
-                foreach (Shape shape in scene)
+                // Random ray sampling is done here
+                for (int k = 0; k < _samplesPerPixel; k++) 
                 {
-                    float distance = shape.Hit(ray);
+                    float randomU = (float) (random.NextDouble() * 2 - 1) * _antialiasingSquareWidth;
+                    float randomV = (float) (random.NextDouble() * 2 - 1) * _antialiasingSquareWidth;
+                    Ray ray = ConstructRay(u + randomU, v + randomV);
 
-                    // Check if the distance is less than the current distance in the depth buffer
-                    if (_depthBuffer[i, j] > distance && distance > 0)
+                    foreach (Shape shape in scene)
                     {
-                        _depthBuffer[i, j] = distance;
-                        if (distance < _far && distance > _near) {
-                            Vector color = CreatePixelColor(ray, scene, shape, distance);
+                        float distance = shape.Hit(ray);
 
-                            // Set the color of the pixel
-                            _colorBuffer[i, j] = color;
+                        // Check if the distance is less than the current distance in the depth buffer
+                        if (_depthBuffer[i, j] > distance && distance > 0)
+                        {
+                            _depthBuffer[i, j] = distance;
+                            if (distance < _far && distance > _near) {
+                                Vector color = CreatePixelColor(ray, scene, shape, distance);
+                                accumulatedColor += color;
+                            }
                             
+                        } else {
+                            accumulatedColor += new Vector(0,0,0); // Not needed, but for clarity
                         }
-                        
                     }
                 }
+
+                // Average the color
+                accumulatedColor = new Vector 
+                        (accumulatedColor.X / _samplesPerPixel,
+                        accumulatedColor.Y / _samplesPerPixel,
+                        accumulatedColor.Z / _samplesPerPixel); 
+                // Set the color of the pixel
+                image.Paint(i, j, accumulatedColor);
                 
             }
         }
 
-        // Add Antialiasing
-        Vector [,] newColorBuffer = new Vector[_width, _height];
-        Random random = new Random();
-
-        for (int i = 0; i < _width; i++)
-        {
-            for (int j = 0; j < _height; j++)
-            {
-                Vector accumulatedColor = new Vector();
-
-                for (int k = 0; k < _samplesPerPixel; k++)
-                {
-                    // Generate the random i,j pixels
-                    int randomI = random.Next(-_antialiasingSquareWidth, _antialiasingSquareWidth);
-                    int randomJ = random.Next(-_antialiasingSquareWidth, _antialiasingSquareWidth);
-
-                    // Clamp the random i,j pixels
-                    randomI = Math.Clamp(randomI, 0, _width - 1);
-                    randomJ = Math.Clamp(randomJ, 0, _height - 1);
-
-                    // Add the color of the random pixel to the current color
-                    accumulatedColor += _colorBuffer[randomI, randomJ];
-                }
-
-                // Average the color
-                accumulatedColor = new Vector(
-                        accumulatedColor.X / _samplesPerPixel,
-                        accumulatedColor.Y / _samplesPerPixel,
-                        accumulatedColor.Z / _samplesPerPixel
-                );
-
-                newColorBuffer[i, j] = accumulatedColor;
-            }
-        }
-
-        // Paint the image
-        for (int i = 0; i < _width; i++) 
-        {
-            for (int j = 0; j < _height; j++) 
-            {
-                image.Paint(i, j, newColorBuffer[i,j]);
-            }
-        }
-
-        // Save the image
         image.SaveImage(fileName);
     }
 
