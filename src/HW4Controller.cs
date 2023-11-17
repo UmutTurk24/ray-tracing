@@ -16,7 +16,7 @@ public class HW4Controller
         new Vector(0.0f, 20.0f, 80.0f),
         new Vector(0.0f, 0f, 0f),
         new Vector(0.0f, 1f, 0f),
-        0.1f, 150f, 512, 512, -3f, 3f, -3f, 3f);
+        0.1f, 150f, 512, 512, -10f, 10f, -10f, 10f);
 
         //Build the scene
         Scene scene2 = new Scene();
