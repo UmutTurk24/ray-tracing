@@ -125,8 +125,8 @@ public class Camera
     }
 
     private float[,] _depthBuffer;
-    private int _samplesPerPixel = 500; // Count of random samples for each pixel
-    private int _antialiasingSquareWidth = 10; // Width of the square for antialiasing
+    private int _samplesPerPixel = 50; // Count of random samples for each pixel
+    private int _antialiasingSquareWidth = 4; // Width of the square for antialiasing
 
     public Camera()
     {
@@ -236,6 +236,7 @@ public class Camera
         {
             for (int j = 0; j < _height; j++)
             {
+                
                 Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
                 // Set the color of the pixel
                 image.Paint(i, j, antialiasedColor);
@@ -328,26 +329,6 @@ public class Camera
     private Vector AntialiasedColor(Scene scene, Random random, int i, int j)
     {
         Vector accumulatedColor = new Vector(0,0,0);
-
-        // Translate the pixel coordinates to the space coordinates
-        // (float u, float v) = SpaceToPixelMapping(i,j);
-
-        // Ray ray = ConstructRay(u, v);
-        // foreach (Shape shape in scene)
-        // {
-        //     float distance = shape.Hit(ray);
-        //     // Check if the distance is less than the current distance in the depth buffer
-        //     if (_depthBuffer[i, j] > distance && distance > 0)
-        //     {
-        //         _depthBuffer[i, j] = distance;
-        //         if (distance < _far && distance > _near) {
-        //             accumulatedColor = CreatePixelColor(ray, scene, shape, distance);
-        //         }
-        //     }
-        // }
-
-        // Reinitialize the depth buffer
-        _depthBuffer[i, j] = float.PositiveInfinity;
 
         // Random ray sampling is done here
         for (int k = 0; k < _samplesPerPixel; k++) 
