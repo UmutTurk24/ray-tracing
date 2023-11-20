@@ -125,9 +125,9 @@ public class Camera
     }
 
     private float[,] _depthBuffer;
-    private int _samplesPerPixel = 20; // Count of random samples for each pixel
-    // private float _antialiasingSquareWidth = 0.0001f; // Width of the square for antialiasing
-    private int _antialiasingSquareWidth = 3; // Width of the square for antialiasing
+    private int _samplesPerPixel = 500; // Count of random samples for each pixel
+    private int _antialiasingSquareWidth = 10; // Width of the square for antialiasing
+
     public Camera()
     {
         /// <summary>
@@ -222,67 +222,7 @@ public class Camera
             }
         }
     }
-
-    // public void RenderImage(String fileName, Scene scene) {
-    //     /// <summary>
-    //     /// Renders the image and saves it to the specified file.
-    //     /// </summary>
-    //     /// <param name="fileName">The name of the file to save the image to.</param>
-    //     /// <returns>void</returns>
-    //     Image image = new Image(_width, _height);
-
-    //     Random random = new Random();
-
-    //     for (int i = 0; i < _width; i++)
-    //     {
-    //         for (int j = 0; j < _height; j++)
-    //         {
-    //             // Translate the pixel coordinates to the space coordinates
-    //             (float u, float v) = SpaceToPixelMapping(i,j);
-
-    //             Vector accumulatedColor = new Vector(0,0,0);
-
-    //             // Random ray sampling is done here
-    //             for (int k = 0; k < _samplesPerPixel; k++) 
-    //             {
-    //                 float randomU = (float) (random.NextDouble() * 2 - 1) * _antialiasingSquareWidth;
-    //                 float randomV = (float) (random.NextDouble() * 2 - 1) * _antialiasingSquareWidth;
-    //                 Ray ray = ConstructRay(u + randomU, v + randomV);
-
-    //                 foreach (Shape shape in scene)
-    //                 {
-    //                     float distance = shape.Hit(ray);
-
-    //                     // Check if the distance is less than the current distance in the depth buffer
-    //                     if (_depthBuffer[i, j] > distance && distance > 0)
-    //                     {
-    //                         _depthBuffer[i, j] = distance;
-    //                         if (distance < _far && distance > _near) {
-    //                             Vector color = CreatePixelColor(ray, scene, shape, distance);
-    //                             accumulatedColor += color;
-    //                         }
-                            
-    //                     } else {
-    //                         accumulatedColor += new Vector(0,0,0); // Not needed, but for clarity
-    //                     }
-    //                 }
-    //             }
-
-    //             // Average the color
-    //             accumulatedColor = new Vector 
-    //                     (accumulatedColor.X / _samplesPerPixel,
-    //                     accumulatedColor.Y / _samplesPerPixel,
-    //                     accumulatedColor.Z / _samplesPerPixel); 
-    //             // Set the color of the pixel
-    //             image.Paint(i, j, accumulatedColor);
-                
-    //         }
-    //     }
-
-    //     image.SaveImage(fileName);
-    // }
-
-        public void RenderImage(String fileName, Scene scene) {
+    public void RenderImage(String fileName, Scene scene) {
         /// <summary>
         /// Renders the image and saves it to the specified file.
         /// </summary>
@@ -296,73 +236,12 @@ public class Camera
         {
             for (int j = 0; j < _height; j++)
             {
-                // Translate the pixel coordinates to the space coordinates
-                (float u, float v) = SpaceToPixelMapping(i,j);
-
-                Vector accumulatedColor = new Vector(0,0,0);
-
-                Ray ray = ConstructRay(u, v);
-                foreach (Shape shape in scene)
-                {
-                    float distance = shape.Hit(ray);
-
-                    // Check if the distance is less than the current distance in the depth buffer
-                    if (_depthBuffer[i, j] > distance && distance > 0)
-                    {
-                        _depthBuffer[i, j] = distance;
-                        if (distance < _far && distance > _near) {
-                            accumulatedColor = CreatePixelColor(ray, scene, shape, distance);
-                            
-                        }
-                        
-                    }
-                }
-
-                // Reinitialize the depth buffer
-                // _depthBuffer[i, j] = float.PositiveInfinity;
-
-                // Random ray sampling is done here
-                for (int k = 0; k < _samplesPerPixel-1; k++) 
-                {
-                    int randomI = random.Next(-_antialiasingSquareWidth, _antialiasingSquareWidth);
-                    int randomJ = random.Next(-_antialiasingSquareWidth, _antialiasingSquareWidth);
-
-                    randomI = Math.Clamp(randomI + i, 0, _width - 1);
-                    randomJ = Math.Clamp(randomJ + j, 0, _height - 1);
-
-                    (float randomU, float randomV) = SpaceToPixelMapping(randomI,randomJ);
-                    Ray randomRay = ConstructRay(randomU, randomV);
-
-                    Vector color = new Vector();
-
-                    foreach (Shape shape in scene)
-                    {
-                        float distance = shape.Hit(randomRay);
-
-                        // Check if the distance is less than the current distance in the depth buffer
-                        if (_depthBuffer[randomI, randomJ] >= distance && distance > 0)
-                        {
-                            _depthBuffer[randomI, randomJ] = distance;
-                            if (distance < _far && distance > _near) {
-                                color = CreatePixelColor(randomRay, scene, shape, distance);
-                                
-                            }
-                        }
-                    }
-                    accumulatedColor += color;
-                }
-
-                // Average the color
-                accumulatedColor = new Vector 
-                        (accumulatedColor.X / _samplesPerPixel,
-                        accumulatedColor.Y / _samplesPerPixel,
-                        accumulatedColor.Z / _samplesPerPixel); 
+                Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
                 // Set the color of the pixel
-                image.Paint(i, j, accumulatedColor);
+                image.Paint(i, j, antialiasedColor);
                 
             }
         }
-
         image.SaveImage(fileName);
     }
 
@@ -446,7 +325,69 @@ public class Camera
 
     }
 
+    private Vector AntialiasedColor(Scene scene, Random random, int i, int j)
+    {
+        Vector accumulatedColor = new Vector(0,0,0);
 
+        // Translate the pixel coordinates to the space coordinates
+        // (float u, float v) = SpaceToPixelMapping(i,j);
+
+        // Ray ray = ConstructRay(u, v);
+        // foreach (Shape shape in scene)
+        // {
+        //     float distance = shape.Hit(ray);
+        //     // Check if the distance is less than the current distance in the depth buffer
+        //     if (_depthBuffer[i, j] > distance && distance > 0)
+        //     {
+        //         _depthBuffer[i, j] = distance;
+        //         if (distance < _far && distance > _near) {
+        //             accumulatedColor = CreatePixelColor(ray, scene, shape, distance);
+        //         }
+        //     }
+        // }
+
+        // Reinitialize the depth buffer
+        _depthBuffer[i, j] = float.PositiveInfinity;
+
+        // Random ray sampling is done here
+        for (int k = 0; k < _samplesPerPixel; k++) 
+        {
+            int randomI = random.Next(-_antialiasingSquareWidth, _antialiasingSquareWidth);
+            int randomJ = random.Next(-_antialiasingSquareWidth, _antialiasingSquareWidth);
+
+            randomI = Math.Clamp(randomI + i, 0, _width - 1);
+            randomJ = Math.Clamp(randomJ + j, 0, _height - 1);
+
+            (float randomU, float randomV) = SpaceToPixelMapping(randomI,randomJ);
+            Ray randomRay = ConstructRay(randomU, randomV);
+
+            Vector color = new Vector();
+
+            foreach (Shape shape in scene)
+            {
+                float distance = shape.Hit(randomRay);
+
+                // Check if the distance is less than the current distance in the depth buffer
+                if (_depthBuffer[randomI, randomJ] >= distance && distance > 0)
+                {
+                    _depthBuffer[randomI, randomJ] = distance;
+                    if (distance < _far && distance > _near) {
+                        color = CreatePixelColor(randomRay, scene, shape, distance);
+                        
+                    }
+                }
+            }
+
+            _depthBuffer[randomI, randomJ] = float.PositiveInfinity;
+            accumulatedColor += color;
+        }
+
+        // Average the color
+        return new Vector 
+                (accumulatedColor.X / _samplesPerPixel,
+                accumulatedColor.Y / _samplesPerPixel,
+                accumulatedColor.Z / _samplesPerPixel);      
+    }
     private (float, float) SpaceToPixelMapping(int i, int j)
     {
         /// <summary>

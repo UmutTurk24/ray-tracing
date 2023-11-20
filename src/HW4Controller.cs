@@ -34,16 +34,20 @@ public class HW4Controller
         scene2.AddShape(ref s3);
         scene2.AddShape(ref s2);
         scene2.AddShape(ref s1);
-        c2.RenderImage("SphereScene.bmp", scene2);
+        // c2.RenderImage("SphereScene.bmp", scene2);
         
 
-        // // Orthographic Test
-        // Camera c1 = new Camera(Camera.Projection.Orthographic,
-        // new Vector(0.0f, 100.0f, 150.0f),
-        // new Vector(0.0f, 0f, 0f),
-        // new Vector(0.0f, 1f, 0f),
-        // 0.1f, 350f, 512, 512, -200f, 200f, -200f, 200f);
-        // Scene scene3 = new Scene();
+        // Orthographic Test
+        Camera c1 = new Camera(Camera.Projection.Orthographic,
+        new Vector(0.0f, 100.0f, 150.0f),
+        new Vector(0.0f, 0f, 0f),
+        new Vector(0.0f, 1f, 0f),
+        0.1f, 350f, 512, 512, -50, 50, -50f, 50f);
+
+        Scene scene3 = new Scene();
+        scene3.Light = new Vector(-50.0f,100.0f, 30.0f);
+        Shape midSphere = new Sphere(new Vector(0.0f, 0.0f, 0.0f), 20f);
+        scene3.AddShape(ref midSphere);
         // Random rnd = new Random();
         // for (int i = 0; i < 10; i ++) {
         //     for (int j = 0; j < 10; j++) {
@@ -56,7 +60,7 @@ public class HW4Controller
         // }
         
         // scene3.Light = new Vector(-30.0f,180.0f, 250.0f);
-        // c1.RenderImage("SphereArray.bmp", scene3);
+        c1.RenderImage("Sphere-.bmp", scene3);
 
 
 
