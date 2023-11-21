@@ -59,9 +59,9 @@ public class Sphere : Shape
         Vector oc = r.Origin - _center;
 
         float a = Vector.Dot(r.Direction, r.Direction);
-        float b = 2.0f * Vector.Dot(oc, r.Direction);
+        float b =  Vector.Dot(oc, r.Direction);
         float c = Vector.Dot(oc, oc) - _radius * _radius;
-        float discriminant = b * b - 4 * a * c;
+        float discriminant = b * b -  a * c;
 
         if (discriminant < 0)
         {
@@ -69,16 +69,10 @@ public class Sphere : Shape
         }
         else
         {
-            float solution1 = (float)(-b - Math.Sqrt(discriminant)) / (2.0f * a);
-            float solution2 = (float)(-b + Math.Sqrt(discriminant)) / (2.0f * a);
+            float solution1 = (float)(-b - Math.Sqrt(discriminant)) / ( a);
+            float solution2 = (float)(-b + Math.Sqrt(discriminant)) / ( a);
 
-            Vector intersection1 = r.Origin + r.Direction * solution1;
-            Vector intersection2 = r.Origin + r.Direction * solution2;
-
-            float distance1 = Math.Abs(~(r.Origin - intersection1));
-            float distance2 = Math.Abs(~(r.Origin - intersection2));
-            
-            return (distance1 < distance2) ? distance1 : distance2;
+            return (solution1 < solution2) ? solution1 : solution2;
         }
 
     }
@@ -97,6 +91,36 @@ public class Sphere : Shape
         Vector normal = p - _center;
         Vector.Normalize(ref normal);
         return normal;
+    }
+
+    public override bool Equals(object obj)
+    {
+        /// <summary>
+        /// Compares two vectors for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current vector.</param>
+        /// <returns>True if the specified object is equal to the current vector; otherwise, false.</returns>
+        /// <exception cref="NullReferenceException">The obj parameter is null.</exception>
+        /// <exception cref="InvalidCastException">The obj parameter is not a Vector object.</exception>
+
+        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+        {
+            return false;
+        } else
+        {
+            Sphere p = (Sphere)obj;
+            return (this._center == p.Center) && (this._radius == p.Radius);
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        /// <summary>
+        /// Returns the hash code for this vector.
+        /// </summary>
+        /// <returns>A 32-bit signed integer hash code.</returns>
+
+        return HashCode.Combine(_center, _radius);
     }
 
 }
