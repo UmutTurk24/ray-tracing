@@ -239,34 +239,6 @@ public class Camera
         /// <returns>void</returns>
         Image image = new Image(_width, _height);
 
-        // // Create sqrt(_width) threads
-        // Thread[] threads = new Thread[_numberOfThreads];
-
-        // // Create the list of colors
-        // ArrayList[] colorList = new ArrayList[_numberOfThreads];
-        
-        // // Start the threads
-        // for (int threadIndex = 0; threadIndex < _numberOfThreads; threadIndex++)
-        // {
-        //     Scene localScene = scene;
-        //     threads[threadIndex] = new Thread(() => colorList[threadIndex] = CalculateColors(threadIndex, localScene));
-        //     threads[threadIndex].Start();
-        // }
-
-        // for (int i = 0; i < _numberOfThreads; i++)
-        // {
-        //     threads[i].Join(); // Wait for each thread to complete
-        //     for (int j = 0; j < _width; j++)
-        //     {
-        //         Vector[] colors = (Vector[])colorList[i][j];
-        //         for (int k = 0; k < _height; k++)
-        //         {
-        //             // Set the color of the pixel
-        //             image.Paint(j, k, colors[k]);
-        //         }
-        //     }
-        // }
-
         Random random = new Random();
 
         for (int i = 0; i < _width; i++)
@@ -376,6 +348,17 @@ public class Camera
         // Calculate the point of intersection
         Vector intersection = ray.Origin + ray.Direction * distance;
 
+        Vector pointToEye;
+        if (Camera.Projection.Orthographic == _projection)
+        {
+            pointToEye = -ray.Direction;
+        }
+        else // perspective
+        {
+            pointToEye = _eye - intersection;
+        }
+        Vector.Normalize(ref pointToEye);
+
         // Check if the intersection is in shadow
         Ray shadowRay = new Ray(intersection, scene.Light - intersection);
         foreach (Shape shadowShape in scene)
@@ -387,14 +370,13 @@ public class Camera
             }
         }
 
+
         // Calculate the light direction
         Vector lightDirection = scene.Light - intersection;
         Vector.Normalize(ref lightDirection);
 
-        
-
         // Calculate the bisector h=bisector(v,l) = Normalized(v + l)
-        Vector bisector = (-ray.Direction) + lightDirection;
+        Vector bisector = pointToEye + lightDirection;
         Vector.Normalize(ref bisector);
 
         // Calculate the Illumination from the source

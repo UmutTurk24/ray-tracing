@@ -128,7 +128,6 @@ public class Camera
     private float[,] _depthBuffer;
     private int _samplesPerPixel = 1; // Count of random samples for each pixel
     private int _antialiasingSquareWidth = 0; // Width of the square for antialiasing
-    private int _numberOfThreads = 4; // Number of threads to use for rendering
 
     public Camera()
     {
@@ -159,7 +158,6 @@ public class Camera
         SetupDepthBuffer();
 
         // Set the thread number
-        _numberOfThreads = (int)Math.Floor(Math.Sqrt(_width));
 
     }
 
@@ -205,7 +203,6 @@ public class Camera
         SetupDepthBuffer();
 
         // Set the thread number
-        _numberOfThreads = (int)Math.Floor(Math.Sqrt(_width));
     }
 
     private void CalculateCameraVectors() {
@@ -255,52 +252,6 @@ public class Camera
         image.SaveImage(fileName);
     }
 
-    private ArrayList CalculateColors(int threadIndex, Scene localScene)
-    {
-        int numberOfThreads = _numberOfThreads;
-        // Create a list of columns
-        ArrayList colorList = new ArrayList();
-        
-        Random random = new Random();
-        // Last thread gets the rest
-        if (threadIndex == _numberOfThreads - 1)
-        {
-            for (int j = (int)Math.Floor((double)threadIndex * _width / _numberOfThreads); j < _width; j++)
-            {
-                // Create a colors array
-                Vector[] colors = new Vector[_height];
-                for (int k = 0; k < _height; k++)
-                {
-                    // Add the calculated color to the colors array
-                    colors[k] = AntialiasedColor(localScene, random, j, k);
-                }
-                // Append the colors array to the colorList
-                colorList.Add(colors);
-            }
-        }
-        else
-        {
-            
-            for (int j = (int)Math.Floor((double)threadIndex * _width / numberOfThreads); j < (threadIndex + 1) * _width / numberOfThreads; j++)
-            {
-                // Create a colors array
-                Vector[] colors = new Vector[_height];
-                for (int k = 0; k < _height; k++)
-                {
-                    // Add the calculated color to the colors array
-                    colors[k] = AntialiasedColor(localScene, random, j, k);
-                }
-                // Append the colors array to the colorList
-                colorList.Add(colors);
-            }
-
-        }
-
-        return colorList;
-
-
-    }
-
     private Ray ConstructRay(float u, float v)
     {
         /// <summary>
@@ -347,6 +298,7 @@ public class Camera
 
         // Calculate the point of intersection
         Vector intersection = ray.Origin + ray.Direction * distance;
+
         Vector pointToEye;
         if (Camera.Projection.Orthographic == _projection)
         {
@@ -354,8 +306,10 @@ public class Camera
         }
         else // perspective
         {
-            pointToEye = intersection - _eye;
+            pointToEye = _eye - intersection;
         }
+        Vector.Normalize(ref pointToEye);
+
         // Check if the intersection is in shadow
         Ray shadowRay = new Ray(intersection, scene.Light - intersection);
         foreach (Shape shadowShape in scene)
@@ -368,12 +322,10 @@ public class Camera
         }
 
         // Calculate the light direction
-        // Vector lightDirection = scene.Light - intersection;
         Vector lightDirection = scene.Light - intersection;
         Vector.Normalize(ref lightDirection);
 
         // Calculate the bisector h=bisector(v,l) = Normalized(v + l)
-        // Vector bisector = (-ray.Direction) + lightDirection;
         Vector bisector = pointToEye + lightDirection;
         Vector.Normalize(ref bisector);
 
