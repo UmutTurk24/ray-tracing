@@ -59,7 +59,6 @@ public class HW4Controller
 
         }
         
-        // scene3.Light = new Vector(-30.0f,180.0f, 250.0f);
         c1.RenderImage("SphereArray.bmp", scene3);
 
 
