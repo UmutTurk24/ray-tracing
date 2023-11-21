@@ -126,8 +126,8 @@ public class Camera
     }
 
     private float[,] _depthBuffer;
-    private int _samplesPerPixel = 50; // Count of random samples for each pixel
-    private int _antialiasingSquareWidth = 4; // Width of the square for antialiasing
+    private int _samplesPerPixel = 1; // Count of random samples for each pixel
+    private int _antialiasingSquareWidth = 0; // Width of the square for antialiasing
     private int _numberOfThreads = 4; // Number of threads to use for rendering
 
     public Camera()
@@ -239,47 +239,47 @@ public class Camera
         /// <returns>void</returns>
         Image image = new Image(_width, _height);
 
-        // Create sqrt(_width) threads
-        Thread[] threads = new Thread[_numberOfThreads];
+        // // Create sqrt(_width) threads
+        // Thread[] threads = new Thread[_numberOfThreads];
 
-        // Create the list of colors
-        ArrayList[] colorList = new ArrayList[_numberOfThreads];
+        // // Create the list of colors
+        // ArrayList[] colorList = new ArrayList[_numberOfThreads];
         
-        // Start the threads
-        for (int threadIndex = 0; threadIndex < _numberOfThreads; threadIndex++)
-        {
-            Scene localScene = scene;
-            threads[threadIndex] = new Thread(() => colorList[threadIndex] = CalculateColors(threadIndex, localScene));
-            threads[threadIndex].Start();
-        }
+        // // Start the threads
+        // for (int threadIndex = 0; threadIndex < _numberOfThreads; threadIndex++)
+        // {
+        //     Scene localScene = scene;
+        //     threads[threadIndex] = new Thread(() => colorList[threadIndex] = CalculateColors(threadIndex, localScene));
+        //     threads[threadIndex].Start();
+        // }
 
-        for (int i = 0; i < _numberOfThreads; i++)
-        {
-            threads[i].Join(); // Wait for each thread to complete
-            for (int j = 0; j < _width; j++)
-            {
-                Vector[] colors = (Vector[])colorList[i][j];
-                for (int k = 0; k < _height; k++)
-                {
-                    // Set the color of the pixel
-                    image.Paint(j, k, colors[k]);
-                }
-            }
-        }
+        // for (int i = 0; i < _numberOfThreads; i++)
+        // {
+        //     threads[i].Join(); // Wait for each thread to complete
+        //     for (int j = 0; j < _width; j++)
+        //     {
+        //         Vector[] colors = (Vector[])colorList[i][j];
+        //         for (int k = 0; k < _height; k++)
+        //         {
+        //             // Set the color of the pixel
+        //             image.Paint(j, k, colors[k]);
+        //         }
+        //     }
+        // }
 
         Random random = new Random();
 
-        // for (int i = 0; i < _width; i++)
-        // {
-        //     for (int j = 0; j < _height; j++)
-        //     {
+        for (int i = 0; i < _width; i++)
+        {
+            for (int j = 0; j < _height; j++)
+            {
                 
-        //         Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
-        //         // Set the color of the pixel
-        //         image.Paint(i, j, antialiasedColor);
+                Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
+                // Set the color of the pixel
+                image.Paint(i, j, antialiasedColor);
                 
-        //     }
-        // }
+            }
+        }
         image.SaveImage(fileName);
     }
 
@@ -380,7 +380,7 @@ public class Camera
         Ray shadowRay = new Ray(intersection, scene.Light - intersection);
         foreach (Shape shadowShape in scene)
         {
-            if (shape == shadowShape) continue;
+            if (shape.Equals(shadowShape)) continue;
             float shadowDistance = shadowShape.Hit(shadowRay);
             if (shadowDistance < float.PositiveInfinity && shadowDistance > 0) {
                 return new Vector(30,30,30); // Shadow
@@ -390,6 +390,8 @@ public class Camera
         // Calculate the light direction
         Vector lightDirection = scene.Light - intersection;
         Vector.Normalize(ref lightDirection);
+
+        
 
         // Calculate the bisector h=bisector(v,l) = Normalized(v + l)
         Vector bisector = (-ray.Direction) + lightDirection;

@@ -56,12 +56,13 @@ public class Sphere : Shape
         /// b = 2d(o-c)
         /// c = (o-c)(o-c) - r^2
 
-        Vector oc = r.Origin - _center;
+        Vector oc = r.Origin - _center; // distance
 
+        // float a = Vector.Dot(r.Direction, r.Direction);
         float a = Vector.Dot(r.Direction, r.Direction);
-        float b =  Vector.Dot(oc, r.Direction);
-        float c = Vector.Dot(oc, oc) - _radius * _radius;
-        float discriminant = b * b -  a * c;
+        float b = Vector.Dot(oc, r.Direction);
+        float c = Vector.Dot(oc, oc) - (_radius * _radius);
+        float discriminant = (b * b) - (a * c);
 
         if (discriminant < 0)
         {
@@ -69,8 +70,8 @@ public class Sphere : Shape
         }
         else
         {
-            float solution1 = (float)(-b - Math.Sqrt(discriminant)) / ( a);
-            float solution2 = (float)(-b + Math.Sqrt(discriminant)) / ( a);
+            float solution1 = (float)(-b - Math.Sqrt(discriminant)) / a;
+            float solution2 = (float)(-b + Math.Sqrt(discriminant)) / a;
 
             return (solution1 < solution2) ? solution1 : solution2;
         }
