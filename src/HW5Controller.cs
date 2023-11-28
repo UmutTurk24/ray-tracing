@@ -1,15 +1,20 @@
+using System.Diagnostics;
+using System;
+
 
 /// <summary>
-/// Controller for Hw4
+/// Controller for HW5
 /// </summary>
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
-/// Date: 15 November 2023
+/// Date: 28 November 2023
 /// Time spent: ~5 hours
 public class HW5Controller
 {
     public static void Main()
     {
+
+
        
         // Perspective Test
         Camera c2 = new Camera(Camera.Projection.Perspective,
@@ -34,10 +39,42 @@ public class HW5Controller
         scene2.AddShape(ref s3);
         scene2.AddShape(ref s2);
         scene2.AddShape(ref s1);
-        c2.RenderImage("SphereScene.bmp", scene2);
-        
 
+        Stopwatch stopwatch = new Stopwatch();
 
+        int totalTrials = 100;
+
+        for (int numberOfThreads = 1; numberOfThreads < 2; numberOfThreads++)
+        {
+            long milsecAverage = 0;
+            for (int numTrials = 0; numTrials < totalTrials; numTrials++)
+            {
+                stopwatch.Start();
+                c2.RenderImageParallel("SphereScene2.bmp", scene2, numberOfThreads);
+                stopwatch.Stop();
+
+                milsecAverage += stopwatch.ElapsedMilliseconds;
+                stopwatch.Reset();
+                Console.WriteLine("Trial {0} is done", numTrials);
+            }
+
+            Console.WriteLine("Number of Threads: {0}, Average Mills: {1}", numberOfThreads, milsecAverage/totalTrials);
+            stopwatch.Reset();
+        }
+
+        // Console.Error.WriteLine("Executing sequential loop...");
+        // stopwatch.Start();
+        // c2.RenderImage("SphereScene1.bmp", scene2);
+        // stopwatch.Stop();
+        // Console.Error.WriteLine("Sequential loop time in milliseconds: {0}", stopwatch.ElapsedMilliseconds);
+
+        // stopwatch.Reset();
+
+        // Console.Error.WriteLine("Executing parallel loop...");
+        // stopwatch.Start();
+        // c2.RenderImageParallel("SphereScene2.bmp", scene2);
+        // stopwatch.Stop();
+        // Console.Error.WriteLine("Parallel loop time in milliseconds: {0}", stopwatch.ElapsedMilliseconds);
 
 
     }

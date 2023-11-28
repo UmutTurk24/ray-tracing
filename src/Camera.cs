@@ -127,9 +127,9 @@ public class Camera
     }
 
     private float[,] _depthBuffer;
-    private int _samplesPerPixel = 1; // Count of random samples for each pixel
-    private int _antialiasingSquareWidth = 0; // Width of the square for antialiasing
-    private int _numberOfThreads = 1; // Number of threads to use for rendering
+    private int _samplesPerPixel = 50; // Count of random samples for each pixel
+    private int _antialiasingSquareWidth = 2; // Width of the square for antialiasing
+    // private int _numberOfThreads = 2; // Number of threads to use for rendering
 
     public Camera()
     {
@@ -231,39 +231,43 @@ public class Camera
         /// </summary>
         /// <param name="fileName">The name of the file to save the image to.</param>
         /// <returns>void</returns>
-        
-        RenderImageParallel(fileName, scene);
-        // Image image = new Image(_width, _height);
 
-        // Random random = new Random();
-
-
-
-        // for (int i = 0; i < _width; i++)
-        // {
-        //     for (int j = 0; j < _height; j++)
-        //     {
-                
-        //         Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
-        //         // Set the color of the pixel
-        //         image.Paint(i, j, antialiasedColor);
-                
-        //     }
-        // }
-        // image.SaveImage(fileName);
-    }
-
-    public void RenderImageParallel(String fileName, Scene scene)
-    {
         Image image = new Image(_width, _height);
 
-        Parallel.For(0, _width, i => 
+        Random random = new Random();
+
+        for (int i = 0; i < _width; i++)
         {
             for (int j = 0; j < _height; j++)
             {
-                Console.WriteLine(i + j);
+                
+                Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
+                // Set the color of the pixel
+                image.Paint(i, j, antialiasedColor);
+                
+            }
+        }
+        image.SaveImage(fileName);
+    }
+
+    public void RenderImageParallel(String fileName, Scene scene, int numberOfThreads)
+    {
+        Image image = new Image(_width, _height);
+        ParallelOptions options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = numberOfThreads
+        };
+
+        Parallel.For(0, _width, options, i => 
+        {
+            Random random = new Random();
+            for (int j = 0; j < _height; j++)
+            {
+                Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
+                image.Paint(i, j, antialiasedColor);
             }
         });
+        image.SaveImage(fileName);
 
     }
 
@@ -293,52 +297,6 @@ public class Camera
             new Vector(0,0,0),
             new Vector(0,0,0)
         );
-    }
-
-    private ArrayList CalculateColors(int threadIndex, Scene localScene)
-    {
-        int numberOfThreads = _numberOfThreads;
-        // Create a list of columns
-        ArrayList colorList = new ArrayList();
-        
-        Random random = new Random();
-        // Last thread gets the rest
-        if (threadIndex == _numberOfThreads - 1)
-        {
-            for (int j = (int)Math.Floor((double)threadIndex * _width / _numberOfThreads); j < _width; j++)
-            {
-                // Create a colors array
-                Vector[] colors = new Vector[_height];
-                for (int k = 0; k < _height; k++)
-                {
-                    // Add the calculated color to the colors array
-                    colors[k] = AntialiasedColor(localScene, random, j, k);
-                }
-                // Append the colors array to the colorList
-                colorList.Add(colors);
-            }
-        }
-        else
-        {
-            
-            for (int j = (int)Math.Floor((double)threadIndex * _width / numberOfThreads); j < (threadIndex + 1) * _width / numberOfThreads; j++)
-            {
-                // Create a colors array
-                Vector[] colors = new Vector[_height];
-                for (int k = 0; k < _height; k++)
-                {
-                    // Add the calculated color to the colors array
-                    colors[k] = AntialiasedColor(localScene, random, j, k);
-                }
-                // Append the colors array to the colorList
-                colorList.Add(colors);
-            }
-
-        }
-
-        return colorList;
-
-
     }
 
     private Vector CreatePixelColor(Ray ray, Scene scene, Shape shape, float distance)
@@ -406,6 +364,10 @@ public class Camera
     {
         Vector accumulatedColor = new Vector(0,0,0);
 
+        // if (i % 1 == 0)
+        // {
+        //     Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
+        // }
         // Random ray sampling is done here
         for (int k = 0; k < _samplesPerPixel; k++) 
         {
