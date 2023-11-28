@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using System;
-
+using System.Collections;
+using System.Text;
+using CsvHelper;
+using System.Globalization;
 
 /// <summary>
 /// Controller for HW5
@@ -8,7 +11,6 @@ using System;
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
 /// Date: 28 November 2023
-/// Time spent: ~5 hours
 public class HW5Controller
 {
     public static void Main()
@@ -44,22 +46,29 @@ public class HW5Controller
 
         int totalTrials = 100;
 
-        for (int numberOfThreads = 1; numberOfThreads < 2; numberOfThreads++)
+
+        List<Entry> results = new List<Entry>();
+        for (int numberOfThreads = 1; numberOfThreads < 20; numberOfThreads++)
         {
-            long milsecAverage = 0;
             for (int numTrials = 0; numTrials < totalTrials; numTrials++)
             {
                 stopwatch.Start();
                 c2.RenderImageParallel("SphereScene2.bmp", scene2, numberOfThreads);
                 stopwatch.Stop();
+                results.Add( new Entry {threadNum = numberOfThreads, time = stopwatch.ElapsedMilliseconds});
 
-                milsecAverage += stopwatch.ElapsedMilliseconds;
                 stopwatch.Reset();
                 Console.WriteLine("Trial {0} is done", numTrials);
             }
 
-            Console.WriteLine("Number of Threads: {0}, Average Mills: {1}", numberOfThreads, milsecAverage/totalTrials);
+            Console.WriteLine(numberOfThreads);
             stopwatch.Reset();
+        }
+
+        using (var writer = new StreamWriter("./timeresults.txt"))
+        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        {
+            csv.WriteRecords(results);
         }
 
         // Console.Error.WriteLine("Executing sequential loop...");
@@ -77,5 +86,11 @@ public class HW5Controller
         // Console.Error.WriteLine("Parallel loop time in milliseconds: {0}", stopwatch.ElapsedMilliseconds);
 
 
+    }
+
+    public class Entry
+    {
+        public int threadNum {get; set;}
+        public long time {get; set;}
     }
 }
