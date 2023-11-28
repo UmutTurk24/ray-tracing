@@ -20,7 +20,8 @@
     <Compile Include="Plane.cs" />
     <Compile Include="Scene.cs" />
     <!-- <Compile Include="HW2Controller.cs" /> -->
-    <Compile Include="HW4Controller.cs" />
+    <!-- <Compile Include="HW4Controller.cs" /> -->
+    <Compile Include="HW5Controller.cs" />
     <!-- <Compile Include="HW2sController.cs" />
     <Compile Include="TestCamera.cs" />
     <Compile Include="TestVector.cs" />

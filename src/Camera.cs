@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO.Enumeration;
 using System.Numerics;
 
 /// <summary>
@@ -128,7 +129,7 @@ public class Camera
     private float[,] _depthBuffer;
     private int _samplesPerPixel = 1; // Count of random samples for each pixel
     private int _antialiasingSquareWidth = 0; // Width of the square for antialiasing
-    private int _numberOfThreads = 4; // Number of threads to use for rendering
+    private int _numberOfThreads = 1; // Number of threads to use for rendering
 
     public Camera()
     {
@@ -157,10 +158,6 @@ public class Camera
 
         // Define the depth buffer - set all values to infinity
         SetupDepthBuffer();
-
-        // Set the thread number
-        _numberOfThreads = (int)Math.Floor(Math.Sqrt(_width));
-
     }
 
 
@@ -203,9 +200,6 @@ public class Camera
 
         // Setup the Depth Buffer
         SetupDepthBuffer();
-
-        // Set the thread number
-        _numberOfThreads = (int)Math.Floor(Math.Sqrt(_width));
     }
 
     private void CalculateCameraVectors() {
@@ -237,37 +231,13 @@ public class Camera
         /// </summary>
         /// <param name="fileName">The name of the file to save the image to.</param>
         /// <returns>void</returns>
-        Image image = new Image(_width, _height);
-
-        // Create sqrt(_width) threads
-        Thread[] threads = new Thread[_numberOfThreads];
-
-        // Create the list of colors
-        ArrayList[] colorList = new ArrayList[_numberOfThreads];
         
-        // Start the threads
-        for (int threadIndex = 0; threadIndex < _numberOfThreads; threadIndex++)
-        {
-            Scene localScene = scene;
-            threads[threadIndex] = new Thread(() => colorList[threadIndex] = CalculateColors(threadIndex, localScene));
-            threads[threadIndex].Start();
-        }
-
-        for (int i = 0; i < _numberOfThreads; i++)
-        {
-            threads[i].Join(); // Wait for each thread to complete
-            for (int j = 0; j < _width; j++)
-            {
-                Vector[] colors = (Vector[])colorList[i][j];
-                for (int k = 0; k < _height; k++)
-                {
-                    // Set the color of the pixel
-                    image.Paint(j, k, colors[k]);
-                }
-            }
-        }
+        RenderImageParallel(fileName, scene);
+        // Image image = new Image(_width, _height);
 
         // Random random = new Random();
+
+
 
         // for (int i = 0; i < _width; i++)
         // {
@@ -280,7 +250,21 @@ public class Camera
                 
         //     }
         // }
-        image.SaveImage(fileName);
+        // image.SaveImage(fileName);
+    }
+
+    public void RenderImageParallel(String fileName, Scene scene)
+    {
+        Image image = new Image(_width, _height);
+
+        Parallel.For(0, _width, i => 
+        {
+            for (int j = 0; j < _height; j++)
+            {
+                Console.WriteLine(i + j);
+            }
+        });
+
     }
 
     private Ray ConstructRay(float u, float v)
