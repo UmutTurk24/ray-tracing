@@ -6,4 +6,7 @@ Aside from normal futures like different kinds of projection, I paralelized and 
 
 ![alt text](./images/Spheres.bmp)
 
+![alt text](./images/SphereArray.bmp)
+
+
 But I still can't draw spheres and planes on paper.
