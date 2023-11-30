@@ -263,6 +263,13 @@ public class Camera
 
     public void RenderImageParallel(String fileName, Scene scene, int numberOfThreads)
     {
+        /// <summary>
+        /// Renders the image and saves it to the specified file.
+        /// </summary>
+        /// <param name="fileName">The name of the file to save the image to.</param>
+        /// <param name="scene">The scene to render.</param>
+        /// <param name="numberOfThreads">The number of threads to use for rendering.</param>
+
         Image image = new Image(_width, _height);
         ParallelOptions options = new ParallelOptions
         {
@@ -284,6 +291,13 @@ public class Camera
 
     public void RenderSqImageParallel(String fileName, Scene scene, int numberOfThreads, int antialiasingFactor)
     {
+        /// <summary>
+        /// Renders the image and saves it to the specified file.
+        /// </summary>
+        /// <param name="fileName">The name of the file to save the image to.</param>
+        /// <param name="scene">The scene to render.</param>
+        /// <param name="numberOfThreads">The number of threads to use for rendering.</param>
+        /// <param name="antialiasingFactor">The antialiasing factor.</param>
 
         // Readjust the width and height
         _width  *= antialiasingFactor;
@@ -437,12 +451,17 @@ public class Camera
 
     private Vector AntialiasedColor(Scene scene, Random random, int i, int j)
     {
+        /// <summary>
+        /// Calculates the antialiased color of the pixel.
+        /// </summary>
+        /// <param name="scene">The scene.</param>
+        /// <param name="random">The random number generator.</param>
+        /// <param name="i">The x coordinate of the pixel.</param>
+        /// <param name="j">The y coordinate of the pixel.</param>
+        /// <returns>The antialiased color of the pixel.</returns>
+
         Vector accumulatedColor = new Vector(0,0,0);
 
-        // if (i % 1 == 0)
-        // {
-        //     Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
-        // }
         // Random ray sampling is done here
         for (int k = 0; k < _samplesPerPixel; k++) 
         {
