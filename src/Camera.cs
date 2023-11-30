@@ -126,9 +126,20 @@ public class Camera
         set => _w = value;
     }
 
+    public int SamplesPerPixel
+    {
+        get => _samplesPerPixel;
+        set => _samplesPerPixel = value;
+    }
+    public int AntialiasingSquareWidth
+    {
+        get => _antialiasingSquareWidth;
+        set => _antialiasingSquareWidth = value;
+    }
+
     private float[,] _depthBuffer;
-    private int _samplesPerPixel = 50; // Count of random samples for each pixel
-    private int _antialiasingSquareWidth = 2; // Width of the square for antialiasing
+    private int _samplesPerPixel = 5; // Count of random samples for each pixel
+    private int _antialiasingSquareWidth = 1; // Width of the square for antialiasing
     // private int _numberOfThreads = 2; // Number of threads to use for rendering
 
     public Camera()
