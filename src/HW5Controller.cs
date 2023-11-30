@@ -39,7 +39,7 @@ public class HW5Controller
         scene2.AddShape(ref s2);
         scene2.AddShape(ref s1);
 
-        c2.RenderSqImageParallel("SphereScene2.bmp", scene2, 10, 10);
+        c2.RenderSqImageParallel("SphereScene2.bmp", scene2, 10, 2);
 
         // Stopwatch stopwatch = new Stopwatch();
 

@@ -102,6 +102,8 @@ public class Image
         /// <param name="fileName">The name of the file to save the image to.</param>
         /// <returns>void</returns>
 
+        _image = Filter.GaussianFilter(_image, 2, 5);
+
         // Create a Bitmap object for the image
         Bitmap solution = 
             new(_width, _height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
@@ -119,6 +121,9 @@ public class Image
                 (int) (Math.Pow(color.B/255f, _gamma) * 255)
             ));
         }
+
+        
+        
 
         solution.Save(fileName);
     }

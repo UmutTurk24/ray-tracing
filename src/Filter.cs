@@ -2,7 +2,7 @@ using System.Drawing;
 
 public class Filter
 {
-    public Color[,] GaussianFilter(Color[,] image, int sigma)
+    public static Color[,] GaussianFilter(Color[,] image, int sigma, int size)
     {
         /// <summary>
         /// Applies a Gaussian filter to the image.
@@ -14,7 +14,7 @@ public class Filter
         Color[,] filteredImage = new Color[image.GetLength(0), image.GetLength(1)];
 
         // Create the Gaussian kernel
-        int size = 6 * sigma + 1; 
+
         double[,] kernel = new double[size, size];
 
         for (int x = 0; x < size; x++)
@@ -59,13 +59,16 @@ public class Filter
         return filteredImage;
     }
 
-    private Color Convolve(Color[,] image, double[,] kernel, int x, int y, int channel)
+    private static Color Convolve(Color[,] image, double[,] kernel, int x, int y, int channel)
     {
         int width = image.GetLength(0);
         int height = image.GetLength(1);
         int size = kernel.GetLength(0);
 
-        double result = 0;
+        double resultR = 0;
+        double resultG = 0;
+        double resultB = 0;
+
         int halfSize = size / 2;
 
         for (int i = 0; i < size; i++)
@@ -75,11 +78,15 @@ public class Filter
                 int pixelX = Math.Min(Math.Max(x - halfSize + i, 0), width - 1);
                 int pixelY = Math.Min(Math.Max(y - halfSize + j, 0), height - 1);
 
-                result += image[pixelX, pixelY].GetChannel(channel) * kernel[i, j];
+                resultR += image[pixelX, pixelY].R * kernel[i,j];
+                resultG += image[pixelX, pixelY].G * kernel[i,j];
+                resultB += image[pixelX, pixelY].B * kernel[i,j];
+
+
             }
         }
 
-        return Color.FromArgb((int)result, (int)result, (int)result);
+        return Color.FromArgb((int)resultR, (int)resultG, (int)resultB);
     }
 
     
