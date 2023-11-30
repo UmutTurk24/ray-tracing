@@ -138,8 +138,8 @@ public class Camera
     }
 
     private float[,] _depthBuffer;
-    private int _samplesPerPixel = 5; // Count of random samples for each pixel
-    private int _antialiasingSquareWidth = 1; // Width of the square for antialiasing
+    private int _samplesPerPixel = 1; // Count of random samples for each pixel
+    private int _antialiasingSquareWidth = 0; // Width of the square for antialiasing
     // private int _numberOfThreads = 2; // Number of threads to use for rendering
 
     public Camera()
@@ -282,6 +282,63 @@ public class Camera
 
     }
 
+    public void RenderSqImageParallel(String fileName, Scene scene, int numberOfThreads)
+    {
+
+        // Readjust the width and height
+        _width  *= 2;
+        _height *= 2;
+
+        // Create the color buffer
+        Vector[,] colorBuffer = new Vector[_width, _height];
+
+        ParallelOptions options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = numberOfThreads
+        };
+
+        Parallel.For(0, _width, options, i =>
+        {
+            Random random = new Random();
+            for (int j = 0; j < _height; j++)
+            {
+                Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
+                colorBuffer[i, j] = antialiasedColor;
+            }
+        });
+
+        // Readjust the width and height
+        _width  /= 2;
+        _height /= 2;
+
+        // Create the image
+        Image image = new Image(_width, _height);
+
+        Parallel.For(0, _width, options, i =>
+        {
+            for (int j = 0; j < _height; j++)
+            {
+                Vector color = new Vector();
+                for (int k = 0; k < 2; k++)
+                {
+                    for (int l = 0; l < 2; l++) 
+                    {
+                        color += colorBuffer[(i * 2) + k, (j * 2)+ l];
+                    }
+                }
+
+                // Average the pixel colors
+                color.X = color.X / 4;
+                color.Y = color.Y / 4;
+                color.Z = color.Z / 4;
+
+                image.Paint(i, j, color);
+            }
+        });
+
+        image.SaveImage(fileName);
+    }
+
     private Ray ConstructRay(float u, float v)
     {
         /// <summary>
@@ -418,6 +475,7 @@ public class Camera
                 accumulatedColor.Y / _samplesPerPixel,
                 accumulatedColor.Z / _samplesPerPixel);      
     }
+
     private (float, float) SpaceToPixelMapping(int i, int j)
     {
         /// <summary>
