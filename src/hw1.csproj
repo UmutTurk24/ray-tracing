@@ -19,6 +19,7 @@
     <Compile Include="Sphere.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="Filter.cs" />
     <!-- <Compile Include="HW2Controller.cs" /> -->
     <!-- <Compile Include="HW4Controller.cs" /> -->
     <Compile Include="HW5Controller.cs" />

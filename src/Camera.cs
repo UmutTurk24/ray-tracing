@@ -282,15 +282,18 @@ public class Camera
 
     }
 
-    public void RenderSqImageParallel(String fileName, Scene scene, int numberOfThreads)
+    public void RenderSqImageParallel(String fileName, Scene scene, int numberOfThreads, int antialiasingFactor)
     {
 
         // Readjust the width and height
-        _width  *= 2;
-        _height *= 2;
+        _width  *= antialiasingFactor;
+        _height *= antialiasingFactor;
+        
+        SetupDepthBuffer();
 
         // Create the color buffer
         Vector[,] colorBuffer = new Vector[_width, _height];
+        Console.WriteLine(_height);
 
         ParallelOptions options = new ParallelOptions
         {
@@ -303,13 +306,17 @@ public class Camera
             for (int j = 0; j < _height; j++)
             {
                 Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
-                colorBuffer[i, j] = antialiasedColor;
+                colorBuffer[i,j] = antialiasedColor;
             }
         });
 
+        Console.WriteLine("Done with big pic");
+
         // Readjust the width and height
-        _width  /= 2;
-        _height /= 2;
+        _width  /= antialiasingFactor;
+        _height /= antialiasingFactor;
+
+        SetupDepthBuffer();
 
         // Create the image
         Image image = new Image(_width, _height);
@@ -319,18 +326,18 @@ public class Camera
             for (int j = 0; j < _height; j++)
             {
                 Vector color = new Vector();
-                for (int k = 0; k < 2; k++)
+                for (int k = 0; k < antialiasingFactor; k++)
                 {
-                    for (int l = 0; l < 2; l++) 
+                    for (int l = 0; l < antialiasingFactor; l++) 
                     {
-                        color += colorBuffer[(i * 2) + k, (j * 2)+ l];
+                        color += colorBuffer[(i * antialiasingFactor) + k, (j * antialiasingFactor)+ l];
                     }
                 }
 
                 // Average the pixel colors
-                color.X = color.X / 4;
-                color.Y = color.Y / 4;
-                color.Z = color.Z / 4;
+                color.X = color.X / (int) Math.Pow(antialiasingFactor,2);
+                color.Y = color.Y / (int) Math.Pow(antialiasingFactor,2);
+                color.Z = color.Z / (int) Math.Pow(antialiasingFactor,2);
 
                 image.Paint(i, j, color);
             }
