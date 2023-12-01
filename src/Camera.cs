@@ -8,7 +8,7 @@ using System.Numerics;
 /// </summary>
 /// Class <c>Computer Graphics</c>
 /// Author: Umut Turk
-/// Date: 16 November 2023
+/// Date: 1 December 2023
 public class Camera
 {
 
@@ -292,12 +292,29 @@ public class Camera
     public void RenderSqImageParallel(String fileName, Scene scene, int numberOfThreads, int antialiasingFactor)
     {
         /// <summary>
-        /// Renders the image and saves it to the specified file.
+        /// Renders the image and saves it to the specified file with antialiasing technique defined below.
         /// </summary>
         /// <param name="fileName">The name of the file to save the image to.</param>
         /// <param name="scene">The scene to render.</param>
         /// <param name="numberOfThreads">The number of threads to use for rendering.</param>
         /// <param name="antialiasingFactor">The antialiasing factor.</param>
+
+        /// Antialiasing Technique
+        /// 1. Create a new image with width and height multiplied by the antialiasing factor
+        /// 2. For each pixel in the new image, do the following:
+        ///     2.1. For each subpixel in the pixel, do the following:
+        ///         2.1.1. Calculate the color of the subpixel
+        ///         2.1.2. Store the color of the subpixel
+        ///     2.2. Average the colors of the subpixels
+        ///     2.3. Store the color of the pixel
+        /// 3. Create a new image with width and height divided by the antialiasing factor
+        /// 4. For each pixel in the new image, do the following:
+        ///     4.1. For each subpixel in the pixel, do the following:
+        ///         4.1.1. Calculate the color of the subpixel
+        ///         4.1.2. Store the color of the subpixel
+        ///     4.2. Average the colors of the subpixels
+        ///     4.3. Store the color of the pixel
+        /// 5. Return the new image
 
         // Readjust the width and height
         _width  *= antialiasingFactor;
@@ -323,8 +340,6 @@ public class Camera
                 colorBuffer[i,j] = antialiasedColor;
             }
         });
-
-        Console.WriteLine("Done with big pic");
 
         // Readjust the width and height
         _width  /= antialiasingFactor;
