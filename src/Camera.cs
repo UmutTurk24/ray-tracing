@@ -145,8 +145,10 @@ public class Camera
 
     // Ray Partial Antialiasing Parameters
     private int _rayPartialBundleSize = 10; // The number of rays to be bundled for ray partial antialiasing
-    private float dx = 0.5f; // The factor for ray partial antialiasing in x
-    private float dy = 0.5f; // The factor for ray partial antialiasing in y
+    private float _dxRay = 0.02f; // The factor for ray partial antialiasing in x
+    private float _dyRay = 0.02f; // The factor for ray partial antialiasing in y
+    private float _dxOrg = 0.0003f; // The factor for ray partial antialiasing in x
+    private float _dyOrg = 0.0003f; // The factor for ray partial antialiasing in y
 
     public Camera()
     {
@@ -287,14 +289,15 @@ public class Camera
             Random random = new Random();
             for (int j = 0; j < _height; j++)
             {
-                Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
+                // Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
+                Vector antialiasedColor = RayPartialAntialiasedColor(scene, random, i, j);
                 image.Paint(i, j, antialiasedColor);
             }
         });
         image.SaveImage(fileName);
     }
 
-    private Vector RayPartialAntialiasedColor(Scene scene, Random random, int i, int j)
+    public Vector RayPartialAntialiasedColor(Scene scene, Random random, int i, int j)
     {
         /// <summary>
         /// Calculates the antialiased color of the pixel with Ray Partial Antialiasing.
@@ -321,6 +324,7 @@ public class Camera
             Ray randomRay;
             if (random.Next(0, 2) == 0) randomRay = CalculateRayDifferentialDirection(u, v, random);
             else randomRay = CalculateRayDifferentialOrigin(u, v, random);
+            // randomRay = CalculateRayDifferentialDirection(u, v, random);
 
             Vector color = new Vector();
 
@@ -339,16 +343,15 @@ public class Camera
                     }
                 }
             }
-
             _depthBuffer[i, j] = float.PositiveInfinity;
             accumulatedColor += color;
 
         }
 
         return new Vector
-                (accumulatedColor.X / _samplesPerPixel,
-                accumulatedColor.Y / _samplesPerPixel,
-                accumulatedColor.Z / _samplesPerPixel);
+                (accumulatedColor.X / _rayPartialBundleSize,
+                accumulatedColor.Y / _rayPartialBundleSize,
+                accumulatedColor.Z / _rayPartialBundleSize);
     }
 
     private Ray CalculateRayDifferentialDirection(float u, float v, Random random)
@@ -360,10 +363,44 @@ public class Camera
 
 
         // Calculate the ray differential
-        int randomNumber = random.Next(0, 6);
-        float du = u + dx;
-        float dv = v + dy;
+        int randomNumber = random.Next(0, 8);
 
+        // float du = u + dx;
+        // float dv = v + dy;
+        float du = u;
+        float dv = v;
+        switch (randomNumber)
+        {
+            case 0:
+                du += _dxRay;
+                break;
+            case 1:
+                du -= _dxRay;
+                break;
+            case 2:
+                dv += _dyRay;
+                break;
+            case 3:
+                dv -= _dyRay;
+                break;
+            case 4:
+                du += _dxRay;
+                dv += _dyRay;
+                break;
+            case 5:
+                du -= _dxRay;
+                dv -= _dyRay;
+                break;
+            case 6:
+                du -= _dxRay;
+                dv += _dyRay;
+                break;
+            case 7:
+                du += _dxRay;
+                dv -= _dyRay;
+                break;
+        }
+        
         if (_projection == Projection.Perspective)
         {
             // Calculate the direction of the ray for perspective projection
@@ -400,22 +437,22 @@ public class Camera
         switch (randomNumber)
         {
             case 0:
-                jitteredEye.X += dx;
+                jitteredEye.X += _dxOrg;
                 break;
             case 1:
-                jitteredEye.X -= dx;
+                jitteredEye.X -= _dxOrg;
                 break;
             case 2:
-                jitteredEye.Y += dy;
+                jitteredEye.Y += _dyOrg;
                 break;
             case 3:
-                jitteredEye.Y -= dy;
+                jitteredEye.Y -= _dyOrg;
                 break;
             case 4:
-                jitteredEye.Z += dx;
+                jitteredEye.Z += _dxOrg;
                 break;
             case 5:
-                jitteredEye.Z -= dx;
+                jitteredEye.Z -= _dxOrg;
                 break;
         }
         

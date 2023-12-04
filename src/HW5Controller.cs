@@ -39,7 +39,24 @@ public class HW5Controller
         scene2.AddShape(ref s2);
         scene2.AddShape(ref s1);
 
-        c2.RenderSqImageParallel("SphereScene2.bmp", scene2, 10, 2);
+        // // c2.RenderImageParallel("SphereScene2.bmp", scene2, 10);
+        // c2.RenderSqImageParallel("Sphere-7.bmp", scene2, 10, 7);
+
+
+        // Orthographic Test
+        // Camera c1 = new Camera(Camera.Projection.Orthographic,
+        // new Vector(0.0f, 0.0f, 150.0f),
+        // new Vector(0.0f, 0f, 0f),
+        // new Vector(0.0f, 1f, 0f),
+        // 0.1f, 350f, 512, 512, -50f, 50f, -50f, 50f);
+
+        // Scene scene3 = new Scene();
+        // scene3.Light = new Vector(-40.0f,100.0f, 100.0f);
+        // Shape midSphere = new Sphere(new Vector(0.0f, 0.0f, 0.0f), 20f);
+        // scene3.AddShape(ref midSphere);
+
+        c2.RenderImageParallel("Direction-02-02.bmp", scene2, 10);
+
 
         // Stopwatch stopwatch = new Stopwatch();
 

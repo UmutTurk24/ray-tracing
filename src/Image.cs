@@ -102,7 +102,7 @@ public class Image
         /// <param name="fileName">The name of the file to save the image to.</param>
         /// <returns>void</returns>
 
-        _image = Filter.GaussianFilter(_image, 2, 5);
+        // _image = Filter.GaussianFilter(_image, 2, 9);
 
         // Create a Bitmap object for the image
         Bitmap solution = 
