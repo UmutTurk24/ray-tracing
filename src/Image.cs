@@ -71,7 +71,8 @@ public class Image
     }
     
     // Method to set a pixel color at the specified position
-    public void Paint(int i, int j, Vector color, int alpha = 255) {
+    public void Paint(int i, int j, Vector color, int alpha = 255) 
+    {
         /// <summary>
         /// Sets the color of the pixel at the specified position to the specified color.
         /// </summary>
@@ -79,7 +80,6 @@ public class Image
         /// <param name="j">The y coordinate of the pixel.</param>
         /// <param name="color">The color to set the pixel to.</param>
         /// <param name="alpha">The alpha value of the pixel.</param>
-        /// <returns>void</returns>
         
         // Check if pixel is out of bounds
         if (i < 0 || i >= _width || j < 0 || j >= _height) return;
@@ -121,9 +121,6 @@ public class Image
                 (int) (Math.Pow(color.B/255f, _gamma) * 255)
             ));
         }
-
-        
-        
 
         solution.Save(fileName);
     }

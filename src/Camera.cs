@@ -138,9 +138,15 @@ public class Camera
     }
 
     private float[,] _depthBuffer;
+
+    // Regular Antialiasing Parameters
     private int _samplesPerPixel = 1; // Count of random samples for each pixel
     private int _antialiasingSquareWidth = 0; // Width of the square for antialiasing
-    // private int _numberOfThreads = 2; // Number of threads to use for rendering
+
+    // Ray Partial Antialiasing Parameters
+    private int _rayPartialBundleSize = 10; // The number of rays to be bundled for ray partial antialiasing
+    private float dx = 0.5f; // The factor for ray partial antialiasing in x
+    private float dy = 0.5f; // The factor for ray partial antialiasing in y
 
     public Camera()
     {
@@ -286,9 +292,153 @@ public class Camera
             }
         });
         image.SaveImage(fileName);
-
     }
 
+    private Vector RayPartialAntialiasedColor(Scene scene, Random random, int i, int j)
+    {
+        /// <summary>
+        /// Calculates the antialiased color of the pixel with Ray Partial Antialiasing.
+        /// </summary>
+        /// <param name="scene">The scene.</param>
+        /// <param name="random">The random number generator.</param>
+        /// <param name="i">The x coordinate of the pixel.</param>
+        /// <param name="j">The y coordinate of the pixel.</param>
+        /// <returns>The antialiased color of the pixel.</returns>
+
+
+        /// Tracing Ray Differentials
+        /// https://graphics.stanford.edu/papers/trd/trd.pdf
+        /// Homan Igehy
+
+
+        // Calculate the original u,v values for ray partial antialiasing
+        (float u, float v) = SpaceToPixelMapping(i,j);
+
+        Vector accumulatedColor = new Vector(0,0,0);
+
+        for (int k = 0; k < _rayPartialBundleSize; k++)
+        {
+            Ray randomRay;
+            if (random.Next(0, 2) == 0) randomRay = CalculateRayDifferentialDirection(u, v, random);
+            else randomRay = CalculateRayDifferentialOrigin(u, v, random);
+
+            Vector color = new Vector();
+
+            foreach (Shape shape in scene)
+            {
+                float distance = shape.Hit(randomRay);
+
+                // Check if the distance is less than the current distance in the depth buffer
+                if (_depthBuffer[i, j] >= distance && distance > 0)
+                {
+                    _depthBuffer[i, j] = distance;
+                    if (distance < _far && distance > _near)
+                    {
+                        color = CreatePixelColor(randomRay, scene, shape, distance);
+
+                    }
+                }
+            }
+
+            _depthBuffer[i, j] = float.PositiveInfinity;
+            accumulatedColor += color;
+
+        }
+
+        return new Vector
+                (accumulatedColor.X / _samplesPerPixel,
+                accumulatedColor.Y / _samplesPerPixel,
+                accumulatedColor.Z / _samplesPerPixel);
+    }
+
+    private Ray CalculateRayDifferentialDirection(float u, float v, Random random)
+    {
+        /// <summary>
+        /// Calculates the ray differential in the direction.
+        /// </summary>
+        /// <returns>Ray</returns>
+
+
+        // Calculate the ray differential
+        int randomNumber = random.Next(0, 6);
+        float du = u + dx;
+        float dv = v + dy;
+
+        if (_projection == Projection.Perspective)
+        {
+            // Calculate the direction of the ray for perspective projection
+            Vector direction = (du * _u) + (dv * _v) - _w;
+            return new Ray(_eye, direction);
+
+        }
+        else if (_projection == Projection.Orthographic)
+        {
+            // Calculate the direction of the ray for orthographic projection
+            Vector origin = _eye + (u * _u) + (v * _v);
+            Vector direction = -_w;
+            return new Ray(origin, direction);
+
+        }
+
+        return new Ray(
+            new Vector(0, 0, 0),
+            new Vector(0, 0, 0)
+        );
+    }
+
+    private Ray CalculateRayDifferentialOrigin(float u, float v, Random random)
+    {
+        /// <summary>
+        /// Calculates the ray differential in the origin.
+        /// </summary>
+        /// <returns>Ray</returns>
+
+        Vector jitteredEye = _eye;
+        // Jitter the eye randomly in either x or y direction
+        int randomNumber = random.Next(0, 6);
+
+        switch (randomNumber)
+        {
+            case 0:
+                jitteredEye.X += dx;
+                break;
+            case 1:
+                jitteredEye.X -= dx;
+                break;
+            case 2:
+                jitteredEye.Y += dy;
+                break;
+            case 3:
+                jitteredEye.Y -= dy;
+                break;
+            case 4:
+                jitteredEye.Z += dx;
+                break;
+            case 5:
+                jitteredEye.Z -= dx;
+                break;
+        }
+        
+        if (_projection == Projection.Perspective)
+        {
+            // Calculate the direction of the ray for perspective projection
+            Vector direction = (u * _u) + (v * _v) - _w;
+            return new Ray(jitteredEye, direction);
+        }
+        else if (_projection == Projection.Orthographic)
+        {
+            // Calculate the direction of the ray for orthographic projection
+            Vector origin = jitteredEye + (u * _u) + (v * _v);
+            Vector direction = -_w;
+            return new Ray(origin, direction);
+        }
+
+        return new Ray(
+            new Vector(0, 0, 0),
+            new Vector(0, 0, 0)
+        );
+
+    }
     public void RenderSqImageParallel(String fileName, Scene scene, int numberOfThreads, int antialiasingFactor)
     {
         /// <summary>
