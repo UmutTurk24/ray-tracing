@@ -9,7 +9,132 @@ using System.Drawing;
 
 public class Filter
 {
-    public static Color[,] GaussianFilter(Color[,] image, int sigma, int size)
+    public static Color[,] GaussianFilter1D(Color[,] image, int sigma, int size)
+    {
+        /// <summary>
+        /// Applies a Gaussian filter to the image.
+        /// </summary>
+        /// <param name="image">The image to apply the filter to.</param>
+        /// <returns>The filtered image.</returns>
+        /// 
+
+        /// Retrieved the following implementation from https://en.wikipedia.org/wiki/Gaussian_filter
+        /// 
+        /// Gaussian Filter is implemented as follows
+        /// 1. Create a new image to store the filtered image
+        /// 2. Create the Gaussian kernel based on the following formula
+        ///     kernel[x] = (1 / (Math.Sqrt(2 * Math.PI) * sigma)) * Math.Exp(-(distanceX * distanceX) / (2 * sigma * sigma))
+        ///     kernel[y] = (1 / (Math.Sqrt(2 * Math.PI) * sigma)) * Math.Exp(-(distanceY * distanceY) / (2 * sigma * sigma))
+        ///     where distanceX = x - (size - 1) / 2.0 and distanceY = y - (size - 1) / 2.0
+        ///     and sigma is the standard deviation of the Gaussian distribution
+        ///     and size is the size of the kernel
+        /// 3. Normalize the filter by dividing each element by the sum of all elements in the kernel
+        /// 4. For each color channel in the image, apply the kernel[x] as follows:
+        ///    4.1. For each pixel in the image, do the following:
+        ///     4.1.1. Apply the kernel to the pixel
+        ///     4.1.2. Store the result in the filtered image
+        ///     4.1.3. Repeat for each color channel
+        ///     4.1.4. Return the filtered image
+        /// 5. Repeat step 4 for kernel[y]
+        /// 6. Return the filtered image
+        ///    
+
+        // Create a new image to store the filtered image
+        Color[,] filteredImage = new Color[image.GetLength(0), image.GetLength(1)];
+
+        // Create the Gaussian kernel
+        double[] kernel_x = new double[size];
+        double[] kernel_y = new double[size];
+
+        for (int x = 0; x < size; x++)
+        {
+            double distanceX = x - (size - 1) / 2.0;
+            kernel_x[x] = 1 / (Math.Sqrt(2 * Math.PI) * sigma) * Math.Exp(-(distanceX * distanceX) / (2 * sigma * sigma));
+        }
+
+        for (int y = 0; y < size; y++)
+        {
+            double distanceY = y - (size - 1) / 2.0;
+            kernel_y[y] = 1 / (Math.Sqrt(2 * Math.PI) * sigma) * Math.Exp(-(distanceY * distanceY) / (2 * sigma * sigma));
+        }
+
+        // Normalize the filter in x
+        double sum_x = 0;
+        for (int x = 0; x < size; x++) sum_x += kernel_x[x];
+        for (int x = 0; x < size; x++) kernel_x[x] /= sum_x;
+
+        // Normalize the filter in y
+        double sum_y = 0;
+        for (int y = 0; y < size; y++) sum_y += kernel_y[y];
+        for (int y = 0; y < size; y++) kernel_y[y] /= sum_y;
+
+        
+        // Apply filter for kernel_x
+        for (int x = 0; x < image.GetLength(0); x++)
+        {
+            for (int y = 0; y < image.GetLength(1); y++)
+            {
+                filteredImage[x, y] = Convolve1D(image, kernel_x, x, y);
+            }
+        }
+
+
+        // Apply filter for kernel_y
+        for (int x = 0; x < image.GetLength(0); x++)
+        {
+            for (int y = 0; y < image.GetLength(1); y++)
+            {
+                filteredImage[x, y] = Convolve1D(image, kernel_y, x, y);
+            }
+        }
+        
+
+        return filteredImage;
+    }
+
+    private static Color Convolve1D(Color[,] image, double[] kernel, int x, int y, bool isX = true)
+    {
+        int width = image.GetLength(0);
+        int height = image.GetLength(1);
+        int size = kernel.GetLength(0);
+
+        double resultR = 0;
+        double resultG = 0;
+        double resultB = 0;
+
+        int halfSize = size / 2;
+
+        if (isX == true)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                int pixelX = Math.Min(Math.Max(x - halfSize + i, 0), width - 1);
+                int pixelY = Math.Min(Math.Max(y, 0), height - 1);
+
+                resultR += image[pixelX, pixelY].R * kernel[i];
+                resultG += image[pixelX, pixelY].G * kernel[i];
+                resultB += image[pixelX, pixelY].B * kernel[i];
+            }
+        }
+        else
+        {
+            for (int i = 0; i < size; i++)
+            {
+                int pixelX = Math.Min(Math.Max(x, 0), width - 1);
+                int pixelY = Math.Min(Math.Max(y - halfSize + i, 0), height - 1);
+
+                resultR += image[pixelX, pixelY].R * kernel[i];
+                resultG += image[pixelX, pixelY].G * kernel[i];
+                resultB += image[pixelX, pixelY].B * kernel[i];
+            }
+        }
+
+        return Color.FromArgb((int)resultR, (int)resultG, (int)resultB);
+    }
+
+
+
+    public static Color[,] GaussianFilter2D(Color[,] image, int sigma, int size)
     {
         /// <summary>
         /// Applies a Gaussian filter to the image.
@@ -68,22 +193,20 @@ public class Filter
                 kernel[x, y] /= sum;
             }
         }
-
-        for (int i = 0; i < 3; i++) // Assuming RGB color channels
+        
+        for (int x = 0; x < image.GetLength(0); x++)
         {
-            for (int x = 0; x < image.GetLength(0); x++)
+            for (int y = 0; y < image.GetLength(1); y++)
             {
-                for (int y = 0; y < image.GetLength(1); y++)
-                {
-                    filteredImage[x, y] = Convolve(image, kernel, x, y, i);
-                }
+                filteredImage[x, y] = Convolve2D(image, kernel, x, y);
             }
         }
+        
 
         return filteredImage;
     }
 
-    private static Color Convolve(Color[,] image, double[,] kernel, int x, int y, int channel)
+    private static Color Convolve2D(Color[,] image, double[,] kernel, int x, int y)
     {
         int width = image.GetLength(0);
         int height = image.GetLength(1);
@@ -115,6 +238,8 @@ public class Filter
 
     
 }
+
+
 
 /*
 Extra information on the terminology used. 
