@@ -140,15 +140,15 @@ public class Camera
     private float[,] _depthBuffer;
 
     // Regular Antialiasing Parameters
-    private int _samplesPerPixel = 1; // Count of random samples for each pixel
-    private int _antialiasingSquareWidth = 0; // Width of the square for antialiasing
+    private int _samplesPerPixel = 25; // Count of random samples for each pixel
+    private int _antialiasingSquareWidth = 3; // Width of the square for antialiasing
 
     // Ray Partial Antialiasing Parameters
     private int _rayPartialBundleSize = 10; // The number of rays to be bundled for ray partial antialiasing
-    private float _dxRay = .1f; // The factor for ray partial antialiasing in x
-    private float _dyRay = .1f; // The factor for ray partial antialiasing in y
-    private float _dxOrg = 0.0003f; // The factor for ray partial antialiasing in x
-    private float _dyOrg = 0.0003f; // The factor for ray partial antialiasing in y
+    private float _dxRay = .5f; // The factor for ray partial antialiasing in x
+    private float _dyRay = .5f; // The factor for ray partial antialiasing in y
+    private float _dxOrg = 0.001f; // The factor for ray partial antialiasing in x
+    private float _dyOrg = 0.001f; // The factor for ray partial antialiasing in y
 
     public Camera()
     {
@@ -289,8 +289,8 @@ public class Camera
             Random random = new Random();
             for (int j = 0; j < _height; j++)
             {
-                // Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
-                Vector antialiasedColor = RayPartialAntialiasedColor(scene, random, i, j);
+                Vector antialiasedColor = AntialiasedColor(scene, random, i, j);
+                // Vector antialiasedColor = RayPartialAntialiasedColor(scene, random, i, j);
                 image.Paint(i, j, antialiasedColor);
             }
         });
@@ -322,9 +322,9 @@ public class Camera
         for (int k = 0; k < _rayPartialBundleSize; k++)
         {
             Ray randomRay;
-            // if (random.Next(0, 2) == 0) randomRay = CalculateRayDifferentialDirection(u, v, random);
-            // else randomRay = CalculateRayDifferentialOrigin(u, v, random);
-            randomRay = CalculateRayDifferentialDirection(u, v, random);
+            if (random.Next(0, 2) == 0) randomRay = CalculateRayDifferentialDirection(u, v, random);
+            else randomRay = CalculateRayDifferentialOrigin(u, v, random);
+            // randomRay = CalculateRayDifferentialDirection(u, v, random);
 
             Vector color = new Vector();
 
@@ -511,7 +511,6 @@ public class Camera
 
         // Create the color buffer
         Vector[,] colorBuffer = new Vector[_width, _height];
-        Console.WriteLine(_height);
 
         ParallelOptions options = new ParallelOptions
         {

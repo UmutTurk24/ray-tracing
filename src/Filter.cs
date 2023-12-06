@@ -6,7 +6,6 @@
 /// Date: 1 December 2023
 
 using System.Drawing;
-
 public class Filter
 {
     public static Color[,] GaussianFilter1D(Color[,] image, int sigma, int size)
@@ -37,12 +36,12 @@ public class Filter
         ///     4.1.4. Return the filtered image
         /// 5. Repeat step 4 for kernel[y]
         /// 6. Return the filtered image
-        ///    
+
 
         // Create a new image to store the filtered image
         Color[,] filteredImage = new Color[image.GetLength(0), image.GetLength(1)];
 
-        // Create the Gaussian kernel
+        // Create the Gaussian kernels
         double[] kernel_x = new double[size];
         double[] kernel_y = new double[size];
 
@@ -68,25 +67,32 @@ public class Filter
         for (int y = 0; y < size; y++) sum_y += kernel_y[y];
         for (int y = 0; y < size; y++) kernel_y[y] /= sum_y;
 
-        
+        // Parallelism options
+        ParallelOptions options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = 9
+        };
+
         // Apply filter for kernel_x
-        for (int x = 0; x < image.GetLength(0); x++)
+        Parallel.For(0, image.GetLength(0), options, x => 
         {
             for (int y = 0; y < image.GetLength(1); y++)
             {
                 filteredImage[x, y] = Convolve1D(image, kernel_x, x, y);
             }
-        }
-
+        });
 
         // Apply filter for kernel_y
-        for (int x = 0; x < image.GetLength(0); x++)
+        Parallel.For(0, image.GetLength(0), options, x => 
         {
             for (int y = 0; y < image.GetLength(1); y++)
             {
-                filteredImage[x, y] = Convolve1D(image, kernel_y, x, y);
+                filteredImage[x, y] = Convolve1D(image, kernel_x, x, y, false);
             }
-        }
+        });
+
+
+
         
 
         return filteredImage;

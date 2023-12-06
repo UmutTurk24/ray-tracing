@@ -16,61 +16,72 @@ public class HW5Controller
     public static void Main()
     {
         /// Do tests for 
-        /// SqSphere-6
+        /// SqSphere-4 - DONE
         /// Origin-001-001
         /// Direction-5-5
-        /// GSphere-3-9
-        /// SSphere-10-500
+        /// GSphere-3-9 - DONE
+        /// SSphere-3-25 - DONE
 
 
-        // Orthographic Test
-        Camera c1 = new Camera(Camera.Projection.Orthographic,
-        new Vector(0.0f, 0.0f, 150.0f),
-        new Vector(0.0f, 0f, 0f),
-        new Vector(0.0f, 1f, 0f),
-        0.1f, 350f, 512, 512, -50f, 50f, -50f, 50f);
+        int totalTrials = 100;
+        Stopwatch stopwatch = new Stopwatch();
+        // double avgTime = 0;
+        // for (int x = 0; x < totalTrials; x++)
+        // {
+        //     Camera c1 = new Camera(Camera.Projection.Orthographic,
+        //     new Vector(0.0f, 0.0f, 150.0f),
+        //     new Vector(0.0f, 0f, 0f),
+        //     new Vector(0.0f, 1f, 0f),
+        //     0.1f, 350f, 512, 512, -50f, 50f, -50f, 50f);
 
-        Scene scene3 = new Scene();
-        scene3.Light = new Vector(-40.0f,100.0f, 100.0f);
-        Shape midSphere = new Sphere(new Vector(0.0f, 0.0f, 0.0f), 20f);
-        scene3.AddShape(ref midSphere);
+        //     Scene scene3 = new Scene();
+        //     scene3.Light = new Vector(-40.0f,100.0f, 100.0f);
+        //     Shape midSphere = new Sphere(new Vector(0.0f, 0.0f, 0.0f), 20f);
+        //     scene3.AddShape(ref midSphere);
 
-        c1.RenderImageParallel("Direction-1-1.bmp", scene3, 10);
+        //     stopwatch.Start();
+        //     c1.RenderImageParallel("Gaussian.bmp", scene3, 9);
+        //     stopwatch.Stop();
+        //     avgTime += stopwatch.ElapsedMilliseconds;
+        //     stopwatch.Reset();
+        // }
+
+        // Console.WriteLine(avgTime/totalTrials);
+        
+
+        // c1.RenderImageParallel("Gaussian.bmp", scene3, 10);
 
 
         // Stopwatch stopwatch = new Stopwatch();
 
-        // int totalTrials = 20;
+        
 
         // List<Entry> results = new List<Entry>();
-        // for (int numberOfThreads = 1; numberOfThreads < 10; numberOfThreads++)
-        // {
-        //     for (int sizeMultiplier = 1; sizeMultiplier < 10; sizeMultiplier++)
-        //     {
-        //         for (int raySampleMultiplier = 1; raySampleMultiplier < 10; raySampleMultiplier++)
-        //         {
-        //             for (int raySquareMultiplier = 1; raySquareMultiplier < 10; raySquareMultiplier++)
-        //             {
-        //                 for (int trialNum = 0; trialNum < totalTrials; trialNum++)
-        //                 {
-        //                     stopwatch.Start();
-        //                     var cams = DefineTestCam(sizeMultiplier, raySampleMultiplier, raySquareMultiplier);
-        //                     cams.Item1.RenderImageParallel("SphereScene2.bmp", cams.Item2, numberOfThreads);
-        //                     stopwatch.Stop();
+        for (int numberOfThreads = 1; numberOfThreads < 17; numberOfThreads++)
+        {
+            double avgTime = 0;
+            for (int trialNum = 0; trialNum < totalTrials; trialNum++)
+            {
+                Camera c1 = new Camera(Camera.Projection.Orthographic,
+                new Vector(0.0f, 0.0f, 150.0f),
+                new Vector(0.0f, 0f, 0f),
+                new Vector(0.0f, 1f, 0f),
+                0.1f, 350f, 512, 512, -50f, 50f, -50f, 50f);
 
-        //                     results.Add( new Entry {threadNum = numberOfThreads, 
-        //                                             sampleray = raySampleMultiplier * 5,
-        //                                             squaresize = raySquareMultiplier,
-        //                                             time = stopwatch.ElapsedMilliseconds,
-        //                                             width = 128*sizeMultiplier});
-        //                     stopwatch.Reset();
-        //                 }
-        //             }
-        //         }
-        //     }
+                Scene scene3 = new Scene();
+                scene3.Light = new Vector(-40.0f,100.0f, 100.0f);
+                Shape midSphere = new Sphere(new Vector(0.0f, 0.0f, 0.0f), 20f);
+                scene3.AddShape(ref midSphere);
 
-        //     Console.WriteLine("Current thread: {0}" + numberOfThreads);
-        // }
+                stopwatch.Start();
+                c1.RenderImageParallel("Gaussian.bmp", scene3, numberOfThreads);
+                stopwatch.Stop();
+                avgTime += stopwatch.ElapsedMilliseconds;
+                stopwatch.Reset();
+            }
+            avgTime /= totalTrials;
+            Console.WriteLine("Current thread: {0}, avg_time: {1}", numberOfThreads, avgTime);
+        }
 
         // using (var writer = new StreamWriter("./timeresults-size.csv"))
         // using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
