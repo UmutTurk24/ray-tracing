@@ -145,8 +145,8 @@ public class Camera
 
     // Ray Partial Antialiasing Parameters
     private int _rayPartialBundleSize = 10; // The number of rays to be bundled for ray partial antialiasing
-    private float _dxRay = 0.02f; // The factor for ray partial antialiasing in x
-    private float _dyRay = 0.02f; // The factor for ray partial antialiasing in y
+    private float _dxRay = .1f; // The factor for ray partial antialiasing in x
+    private float _dyRay = .1f; // The factor for ray partial antialiasing in y
     private float _dxOrg = 0.0003f; // The factor for ray partial antialiasing in x
     private float _dyOrg = 0.0003f; // The factor for ray partial antialiasing in y
 
@@ -322,9 +322,9 @@ public class Camera
         for (int k = 0; k < _rayPartialBundleSize; k++)
         {
             Ray randomRay;
-            if (random.Next(0, 2) == 0) randomRay = CalculateRayDifferentialDirection(u, v, random);
-            else randomRay = CalculateRayDifferentialOrigin(u, v, random);
-            // randomRay = CalculateRayDifferentialDirection(u, v, random);
+            // if (random.Next(0, 2) == 0) randomRay = CalculateRayDifferentialDirection(u, v, random);
+            // else randomRay = CalculateRayDifferentialOrigin(u, v, random);
+            randomRay = CalculateRayDifferentialDirection(u, v, random);
 
             Vector color = new Vector();
 
@@ -411,7 +411,7 @@ public class Camera
         else if (_projection == Projection.Orthographic)
         {
             // Calculate the direction of the ray for orthographic projection
-            Vector origin = _eye + (u * _u) + (v * _v);
+            Vector origin = _eye + (du * _u) + (dv * _v);
             Vector direction = -_w;
             return new Ray(origin, direction);
 

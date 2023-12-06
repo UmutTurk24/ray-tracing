@@ -16,46 +16,46 @@ public class HW5Controller
     public static void Main()
     {
 
-        Camera c2 = new Camera(Camera.Projection.Perspective,
-        new Vector(0.0f, 20.0f, 80.0f),
-        new Vector(0.0f, 0f, 0f),
-        new Vector(0.0f, 1f, 0f),
-        0.1f, 150f, 512, 512, -10f, 10f, -10f, 10f);
+        // Camera c2 = new Camera(Camera.Projection.Perspective,
+        // new Vector(0.0f, 20.0f, 80.0f),
+        // new Vector(0.0f, 0f, 0f),
+        // new Vector(0.0f, 1f, 0f),
+        // 0.1f, 150f, 512, 512, -10f, 10f, -10f, 10f);
 
-        //Build the scene
-        Scene scene2 = new Scene();
-        scene2.Light = new Vector(-30.0f,100.0f, 80.0f);
-        Shape s1 = new Sphere(new Vector(0.0f, 20.0f, 50.0f), 20f);
-        Shape s2 = new Sphere(new Vector(-50.0f, 25.0f, 40.0f), 20f);
-        Shape s3 = new Sphere(new Vector(60f, 40f, -10.0f), 70f);
+        // //Build the scene
+        // Scene scene2 = new Scene();
+        // scene2.Light = new Vector(-30.0f,100.0f, 80.0f);
+        // Shape s1 = new Sphere(new Vector(0.0f, 20.0f, 50.0f), 20f);
+        // Shape s2 = new Sphere(new Vector(-50.0f, 25.0f, 40.0f), 20f);
+        // Shape s3 = new Sphere(new Vector(60f, 40f, -10.0f), 70f);
 
-        s1.D = new Vector(0, 0, 255f);
-        s2.D = new Vector(0, 255f, 0f);
-        s3.D = new Vector(255f, 0f, 0f);
+        // s1.D = new Vector(0, 0, 255f);
+        // s2.D = new Vector(0, 255f, 0f);
+        // s3.D = new Vector(255f, 0f, 0f);
 
-        Shape p2 = new Plane();
-        scene2.AddShape(ref p2);
-        scene2.AddShape(ref s3);
-        scene2.AddShape(ref s2);
-        scene2.AddShape(ref s1);
+        // Shape p2 = new Plane();
+        // scene2.AddShape(ref p2);
+        // scene2.AddShape(ref s3);
+        // scene2.AddShape(ref s2);
+        // scene2.AddShape(ref s1);
 
         // // c2.RenderImageParallel("SphereScene2.bmp", scene2, 10);
         // c2.RenderSqImageParallel("Sphere-7.bmp", scene2, 10, 7);
 
 
         // Orthographic Test
-        // Camera c1 = new Camera(Camera.Projection.Orthographic,
-        // new Vector(0.0f, 0.0f, 150.0f),
-        // new Vector(0.0f, 0f, 0f),
-        // new Vector(0.0f, 1f, 0f),
-        // 0.1f, 350f, 512, 512, -50f, 50f, -50f, 50f);
+        Camera c1 = new Camera(Camera.Projection.Orthographic,
+        new Vector(0.0f, 0.0f, 150.0f),
+        new Vector(0.0f, 0f, 0f),
+        new Vector(0.0f, 1f, 0f),
+        0.1f, 350f, 512, 512, -50f, 50f, -50f, 50f);
 
-        // Scene scene3 = new Scene();
-        // scene3.Light = new Vector(-40.0f,100.0f, 100.0f);
-        // Shape midSphere = new Sphere(new Vector(0.0f, 0.0f, 0.0f), 20f);
-        // scene3.AddShape(ref midSphere);
+        Scene scene3 = new Scene();
+        scene3.Light = new Vector(-40.0f,100.0f, 100.0f);
+        Shape midSphere = new Sphere(new Vector(0.0f, 0.0f, 0.0f), 20f);
+        scene3.AddShape(ref midSphere);
 
-        c2.RenderImageParallel("Direction-02-02.bmp", scene2, 10);
+        c1.RenderImageParallel("Direction-1-1.bmp", scene3, 10);
 
 
         // Stopwatch stopwatch = new Stopwatch();
