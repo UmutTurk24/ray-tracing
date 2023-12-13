@@ -1,1 +1,0 @@
-Number of Threads: 1, Average Mills: 4571
